@@ -1,0 +1,29 @@
+@charset "utf-8";
+
+* {margin: 0; padding: 0; box-sizing: border-box;}
+html {font-family: sans-serif;}
+body {background-color: #191919;}
+
+main {display: flex; flex-direction: column; align-items: center; padding: 60px 0;}
+section {width: 100%; max-width: 700px;}
+section + section {padding-top: 50px;}
+
+.search-wrap h1 {font-size: 30px; color: #fff; font-weight: 600;}
+.search-wrap > form {display: flex; align-items: center; padding: 12px 0;}
+.search-wrap > form button {display: inline-flex; align-items: center; justify-content: center; height: 44px; border-radius: 6px; background-color: #4263EB; border: none; padding: 0 22px; font-size: 15px; color: #fff; cursor: pointer;}
+.search-box {display: flex; align-items: center; background-color: #202020; border: 1px solid rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 6px; margin-right: 6px; flex: 1; max-width: 300px; transition: 0.2s;}
+.search-box:has(:focus) {border-color: rgba(255, 255, 255, 1);}
+.search-box img {display: inline-block; width: 22px; height: 22px; filter: invert(1); margin-right: 10px;}
+.search-box input {background-color: transparent; border: none; height: 22px; outline: none; caret-color: #fff; color: #fff; font-size: 16px; flex: 1;}
+
+.movie-wrap h1 {font-size: 18px; color: #fff; font-weight: 500;}
+.movie-list {display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px;}
+.movie-card {display: flex; flex-direction: column; overflow: hidden; border-radius: 12px;}
+.movie-card img {display: inline-block; width: 100%; height: 300px; object-fit: cover;}
+.movie-card div {display: flex; flex-direction: column; background-color: #202020; padding: 15px;}
+.movie-card p {font-size: 16px; color: #fff; margin-bottom: 4px;}
+.movie-card span {font-size: 14px; color: #6d6d6d;}
+
+@media all and (max-width: 1023px) {
+  section {padding: 0 18px;}
+}
