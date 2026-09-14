@@ -71,11 +71,16 @@ function getMovies(movieArray) {
 
   movieList.innerHTML = '';
 
+  if (movieArray.length === 0) {
+    movieList.innerHTML = '<li class="empty">검색 결과가 없습니다.</li>';
+    return;
+  }
+
   movieArray.forEach(movie => {
     const card = document.createElement('li');
     card.classList.add('movie-card');
 
-    const postUrl = movie.path
+    const postUrl = movie.path;
 
     card.innerHTML = `
     <img src="${postUrl}" alt="${movie.title}">
@@ -91,3 +96,21 @@ function getMovies(movieArray) {
 }
 
 getMovies(movies);
+
+function searchMovies(keyword) {
+  const trimmed = keyword.trim().toLowerCase();
+  if (!trimmed) {
+    getMovies(movies);
+    return;
+  }
+  const filtered = movies.filter(movie => movie.title.toLowerCase().includes(trimmed));
+  getMovies(filtered);
+}
+
+const searchForm = document.getElementById('search-form');
+const searchInput = document.getElementById('search-input');
+
+searchForm.addEventListener('submit', event => {
+  event.preventDefault();
+  searchMovies(searchInput.value);
+});
