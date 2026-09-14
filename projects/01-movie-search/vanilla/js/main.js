@@ -107,6 +107,14 @@ function searchMovies(keyword) {
   getMovies(filtered);
 }
 
+function debounce(callback, delay) {
+  let timerId;
+  return (...args) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => callback(...args), delay);
+  };
+}
+
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 
@@ -114,3 +122,6 @@ searchForm.addEventListener('submit', event => {
   event.preventDefault();
   searchMovies(searchInput.value);
 });
+
+const debounceSearch = debounce(() => searchMovies(searchInput.value), 300);
+searchInput.addEventListener('input', debounceSearch);
