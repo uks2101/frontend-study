@@ -10,15 +10,15 @@ function normalizeMovie(tmdbMovie) {
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
 async function fetchPopularMovies() {
-  try {
-    const response = await fetch(`${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`);
-    if (!response.ok) throw new Error('영화 목록을 불러오지 못했습니다.');
-    const data = await response.json();
-    return data.results;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+  const response = await fetch(`${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`);
+  if (!response.ok) throw new Error('영화 목록을 불러오지 못했습니다.');
+  const data = await response.json();
+  return data.results;
+}
+
+function renderMessage(text) {
+  const movieList = document.querySelector('.movie-list');
+  movieList.innerHTML = `<li class="empty">${text}</li>`;
 }
 
 function getMovies(movieArray) {
@@ -29,12 +29,12 @@ function getMovies(movieArray) {
     return;
   }
 
-  movieList.innerHTML = '';
-
   if (movieArray.length === 0) {
-    movieList.innerHTML = '<li class="empty">검색 결과가 없습니다.</li>';
+    renderMessage('검색 결과가 없습니다.');
     return;
   }
+
+  movieList.innerHTML = '';
 
   movieArray.forEach(movie => {
     const card = document.createElement('li');
@@ -56,30 +56,34 @@ function getMovies(movieArray) {
 }
 
 async function init() {
-  const movieList = document.querySelector('.movie-list');
-  movieList.innerHTML = '<li class="empty">불러오는 중...</li>';
+  renderMessage('불러오는 중...');
 
-  const popularMovies = await fetchPopularMovies();
-  getMovies(popularMovies.map(normalizeMovie));
+  try {
+    const popularMovies = await fetchPopularMovies();
+    getMovies(popularMovies.map(normalizeMovie));
+  } catch (error) {
+    console.error(error);
+    renderMessage('영화 목록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+  }
 }
 
 async function fetchSearchMovies(keyword) {
-  try {
-    const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=ko-KR&query=${encodeURIComponent(keyword)}`);
-    if (!response.ok) throw new Error('검색에 실패했습니다.');
-    const data = await response.json();
-    return data.results;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
+  const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=ko-KR&query=${encodeURIComponent(keyword)}`);
+  if (!response.ok) throw new Error('검색에 실패했습니다.');
+  const data = await response.json();
+  return data.results;
 }
 
 async function searchMovies(keyword) {
   const trimmed = keyword.trim();
-  const results = trimmed ? await fetchSearchMovies(trimmed) : await fetchPopularMovies();
-  
-  getMovies(results.map(normalizeMovie));
+
+  try {
+    const results = trimmed ? await fetchSearchMovies(trimmed) : await fetchPopularMovies();
+    getMovies(results.map(normalizeMovie));
+  } catch (error) {
+    console.error(error);
+    renderMessage('검색에 실패했습니다. 잠시 후 다시 시도해주세요.');
+  }
 }
 
 function debounce(callback, delay) {
