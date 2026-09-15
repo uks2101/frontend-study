@@ -1,65 +1,25 @@
-const movies = [
-  {
-    id: 1,
-    title: '파묘',
-    year: 2024,
-    path: 'image/movie-poster-01.jpeg'
-  },
-  {
-    id: 2,
-    title: '범죄도시3',
-    year: 2023,
-    path: 'image/movie-poster-02.jpeg'
-  },
-  {
-    id: 3,
-    title: '검은 사제들',
-    year: 2015,
-    path: 'image/movie-poster-03.jpeg'
-  },
-  {
-    id: 4,
-    title: '남산의 부장들',
-    year: 2020,
-    path: 'image/movie-poster-04.jpeg'
-  },
-  {
-    id: 5,
-    title: '백두산',
-    year: 2019,
-    path: 'image/movie-poster-05.jpeg'
-  },
-  {
-    id: 6,
-    title: '범죄와의 전쟁',
-    year: 2012,
-    path: 'image/movie-poster-06.jpeg'
-  },
-  {
-    id: 7,
-    title: '1987',
-    year: 2017,
-    path: 'image/movie-poster-07.jpeg'
-  },
-  {
-    id: 8,
-    title: '비상선언',
-    year: 2022,
-    path: 'image/movie-poster-08.jpeg'
-  },
-  {
-    id: 9,
-    title: '부산행',
-    year: 2016,
-    path: 'image/movie-poster-09.jpeg'
-  },
-  {
-    id: 10,
-    title: '독전',
-    year: 2018,
-    path: 'image/movie-poster-10.jpeg'
+function normalizeMovie(tmdbMovie) {
+  return {
+    id: tmdbMovie.id,
+    title: tmdbMovie.title,
+    year: tmdbMovie.release_date ? tmdbMovie.release_date.slice(0, 4) : '개봉일 미정',
+    path: tmdbMovie.poster_path ? `https://image.tmdb.org/t/p/w500${tmdbMovie.poster_path}` : null
+  };
+}
+
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+
+async function fetchPopularMovies() {
+  try {
+    const response = await fetch(`${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`);
+    if (!response.ok) throw new Error('영화 목록을 불러오지 못했습니다.');
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error(error);
+    return [];
   }
-];
+}
 
 function getMovies(movieArray) {
   const movieList = document.querySelector('.movie-list');
@@ -95,16 +55,31 @@ function getMovies(movieArray) {
   });
 }
 
-getMovies(movies);
+async function init() {
+  const movieList = document.querySelector('.movie-list');
+  movieList.innerHTML = '<li class="empty">불러오는 중...</li>';
 
-function searchMovies(keyword) {
-  const trimmed = keyword.trim().toLowerCase();
-  if (!trimmed) {
-    getMovies(movies);
-    return;
+  const popularMovies = await fetchPopularMovies();
+  getMovies(popularMovies.map(normalizeMovie));
+}
+
+async function fetchSearchMovies(keyword) {
+  try {
+    const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=ko-KR&query=${encodeURIComponent(keyword)}`);
+    if (!response.ok) throw new Error('검색에 실패했습니다.');
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error(error);
+    return [];
   }
-  const filtered = movies.filter(movie => movie.title.toLowerCase().includes(trimmed));
-  getMovies(filtered);
+}
+
+async function searchMovies(keyword) {
+  const trimmed = keyword.trim();
+  const results = trimmed ? await fetchSearchMovies(trimmed) : await fetchPopularMovies();
+  
+  getMovies(results.map(normalizeMovie));
 }
 
 function debounce(callback, delay) {
@@ -125,3 +100,5 @@ searchForm.addEventListener('submit', event => {
 
 const debounceSearch = debounce(() => searchMovies(searchInput.value), 300);
 searchInput.addEventListener('input', debounceSearch);
+
+init();
