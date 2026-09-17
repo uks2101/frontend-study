@@ -16,8 +16,8 @@ const NO_POSTER_IMAGE = 'data:image/svg+xml,' + encodeURIComponent(
   '</svg>'
 );
 
-async function fetchPopularMovies() {
-  const response = await fetch(`${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`);
+async function fetchPopularMovies(signal) {
+  const response = await fetch(`${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`, { signal });
   if (!response.ok) throw new Error('영화 목록을 불러오지 못했습니다.');
   const data = await response.json();
   return data.results;
@@ -139,20 +139,27 @@ async function init() {
   }
 }
 
-async function fetchSearchMovies(keyword) {
-  const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=ko-KR&query=${encodeURIComponent(keyword)}`);
+async function fetchSearchMovies(keyword, signal) {
+  const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&language=ko-KR&query=${encodeURIComponent(keyword)}`, { signal });
   if (!response.ok) throw new Error('검색에 실패했습니다.');
   const data = await response.json();
   return data.results;
 }
 
+let currentController = null;
+
 async function searchMovies(keyword) {
+  if (currentController) currentController.abort();
+  currentController = new AbortController();
+  const { signal } = currentController;
+
   const trimmed = keyword.trim();
 
   try {
-    const results = trimmed ? await fetchSearchMovies(trimmed) : await fetchPopularMovies();
+    const results = trimmed ? await fetchSearchMovies(trimmed, signal) : await fetchPopularMovies(signal);
     getMovies(results.map(normalizeMovie));
   } catch (error) {
+    if (error.name === 'AbortError') return;
     console.error(error);
     renderMessage('검색에 실패했습니다. 잠시 후 다시 시도해주세요.');
   }

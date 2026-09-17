@@ -34,3 +34,34 @@ debounce 는 이벤트가 멈추고나서 지정한 시간이 지나야 딱 한 
 - `movieList` DOM 엘리먼트 자체는 안 바뀌고 innerHTML만 갈아끼우기 때문에 이전에 등록한 리스너가 사라지지 않고 누적됨.
 - 증상: 검색을 여러 번 한 뒤 카드를 클릭하면 클릭 한 번에 fetch가 여러 번(검색한 횟수만큼) 나감.
 - 해결: 리스너 등록 코드를 렌더링 함수 밖으로 빼서, 페이지 로드 시 딱 한 번만 실행되도록 분리.
+
+### 실시간 검색에서 응답 순서가 뒤바뀌는 race condition, AbortController로 해결
+
+- debounce는 요청을 "너무 자주 보내는 것"만 막지, 이미 나간 요청들이 도착하는 "순서"까지는 보장 못 함.
+- 예: "범죄" 입력 후 바로 "부산행"으로 바꾸면 두 요청이 거의 동시에 나가는데, 네트워크 상황에 따라 "범죄" 응답이 "부산행" 응답보다 늦게 도착하면 최종적으로 화면엔 오래된 "범죄" 검색 결과가 덮어써서 남음.
+- 해결: `AbortController`로 새 검색이 시작될 때 이전에 나가던 요청을 취소.
+  ```js
+  let currentController = null;
+
+  async function searchMovies(keyword) {
+    if (currentController) currentController.abort();   // 이전 요청 취소
+    currentController = new AbortController();
+    const { signal } = currentController;
+
+    try {
+      const results = trimmed
+        ? await fetchSearchMovies(trimmed, signal)
+        : await fetchPopularMovies(signal);
+      getMovies(results.map(normalizeMovie));
+    } catch (error) {
+      if (error.name === 'AbortError') return;   // 취소된 요청은 에러 취급 안 함
+      ...
+    }
+  }
+  ```
+- `fetch`의 두 번째 인자로 `{ signal }`을 넘겨야 실제로 취소가 걸림. `signal`이 취소되면 그 `fetch`는 실패(reject)로 처리되는데, 이건 네트워크 문제가 아니라 "우리가 일부러 취소"한 것이므로 `error.name === 'AbortError'`로 구분해서 별도 에러 문구 없이 조용히 무시해야 함.
+
+### AbortController와 AbortSignal은 역할이 다른 두 객체
+
+- `AbortController`는 "취소를 트리거하는 쪽"(`controller.abort()` 호출), `controller.signal`(`AbortSignal`)은 "취소 여부를 감지하는 쪽" — `fetch`에 건네주면 fetch가 이 signal을 구독해서 취소 시 스스로 중단함.
+- `fetch`는 controller 전체가 필요 없고 signal만 있으면 되기 때문에, `const { signal } = currentController;`로 필요한 부분만 꺼내 쓴 것. `currentController.signal`을 매번 그대로 써도 동작은 동일하고, 반복 사용을 짧게 쓰기 위한 가독성 목적의 구조 분해 할당(destructuring)일 뿐임.
