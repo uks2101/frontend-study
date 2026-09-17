@@ -46,7 +46,10 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
+let currentModalMovie = null;
+
 function renderModalContent(movie) {
+  currentModalMovie = movie;
   const year = movie.release_date ? movie.release_date.slice(0, 4) : '개봉일 미정';
   const genreNames = movie.genres.map(genre => genre.name).join(', ') || '장르 정보 없음';
   const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : NO_POSTER_IMAGE;
@@ -56,7 +59,17 @@ function renderModalContent(movie) {
   movieModal.querySelector('.modal-title').textContent = movie.title;
   movieModal.querySelector('.modal-meta').textContent = `${year} · ${genreNames} · 평점 ${movie.vote_average.toFixed(1)}`;
   movieModal.querySelector('.modal-overview').textContent = movie.overview || '줄거리 정보가 없습니다.';
+
+  movieModal.querySelector('.modal-favorite').textContent = isFavorite(movie.id) ? '★' : '☆';
 }
+
+movieModal.querySelector('.modal-favorite').addEventListener('click', () => {
+  if (!currentModalMovie) return;
+
+  const normalized = normalizeMovie(currentModalMovie);
+  const isNowFavorite = toggleFavorite(normalized);
+  movieModal.querySelector('.modal-favorite').textContent = isNowFavorite ? '★' : '☆';
+});
 
 async function showMovieDetail(id) {
   openModal();
@@ -86,14 +99,26 @@ document.addEventListener('keydown', event => {
 const movieList = document.querySelector('.movie-list');
 
 movieList.addEventListener('click', event => {
+  const favoriteBtn = event.target.closest('[data-favorite]');
+  if (favoriteBtn) {
+    const card = favoriteBtn.closest('.movie-card');
+    const movie = currentMovies.find(m => m.id === Number(card.dataset.id));
+    const isNowFavorite = toggleFavorite(movie);
+    favoriteBtn.textContent = isNowFavorite ? '★' : '☆';
+    return;
+  }
+
   const card = event.target.closest('.movie-card');
   if (!card) return;
 
   showMovieDetail(card.dataset.id);
 });
 
+let currentMovies = [];
+
 function getMovies(movieArray) {
   const movieList = document.querySelector('.movie-list');
+  currentMovies = movieArray;
 
   if(!movieList) {
     console.error('movie-list 요소를 찾을 수 없습니다.');
@@ -115,6 +140,7 @@ function getMovies(movieArray) {
     const postUrl = movie.path || NO_POSTER_IMAGE;
 
     card.innerHTML = `
+    <button type="button" class="favorite-btn" data-favorite>${isFavorite(movie.id) ? '★' : '☆'}</button>
     <img src="${postUrl}" alt="${movie.title}">
     <div>
       <p>${movie.title}</p>
@@ -127,12 +153,15 @@ function getMovies(movieArray) {
   });
 }
 
+let popularMoviesCache = [];
+
 async function init() {
   renderMessage('불러오는 중...');
 
   try {
     const popularMovies = await fetchPopularMovies();
-    getMovies(popularMovies.map(normalizeMovie));
+    popularMoviesCache = popularMovies.map(normalizeMovie);
+    getMovies(popularMoviesCache);
   } catch (error) {
     console.error(error);
     renderMessage('영화 목록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
@@ -183,5 +212,43 @@ searchForm.addEventListener('submit', event => {
 
 const debounceSearch = debounce(() => searchMovies(searchInput.value), 300);
 searchInput.addEventListener('input', debounceSearch);
+
+const FAVORITES_KEY = 'favorites';
+
+function getFavorites() {
+  const raw = localStorage.getItem(FAVORITES_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+}
+
+function isFavorite(id) {
+  return getFavorites().some(movie => movie.id === Number(id));
+}
+
+function toggleFavorite(movie) {
+  const favorites = getFavorites();
+  const exists = favorites.some(fav => fav.id === movie.id);
+
+  const updated = exists ? favorites.filter(fav => fav.id !== movie.id) : [...favorites, movie];
+
+  saveFavorites(updated);
+  return !exists;
+}
+
+let showingFavoritesOnly = false;
+
+document.getElementById('favorite-toggle').addEventListener('click', () => {
+  showingFavoritesOnly = !showingFavoritesOnly;
+  document.getElementById('favorite-toggle').textContent = showingFavoritesOnly ? '전체보기' : '즐겨찾기';
+
+  if (showingFavoritesOnly) {
+    getMovies(getFavorites());
+  } else {
+    getMovies(popularMoviesCache);
+  }
+});
 
 init();

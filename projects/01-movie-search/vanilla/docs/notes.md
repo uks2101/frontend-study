@@ -65,3 +65,22 @@ debounce 는 이벤트가 멈추고나서 지정한 시간이 지나야 딱 한 
 
 - `AbortController`는 "취소를 트리거하는 쪽"(`controller.abort()` 호출), `controller.signal`(`AbortSignal`)은 "취소 여부를 감지하는 쪽" — `fetch`에 건네주면 fetch가 이 signal을 구독해서 취소 시 스스로 중단함.
 - `fetch`는 controller 전체가 필요 없고 signal만 있으면 되기 때문에, `const { signal } = currentController;`로 필요한 부분만 꺼내 쓴 것. `currentController.signal`을 매번 그대로 써도 동작은 동일하고, 반복 사용을 짧게 쓰기 위한 가독성 목적의 구조 분해 할당(destructuring)일 뿐임.
+
+### 즐겨찾기 버그 1 - id 오타로 스크립트 전체가 멈춤
+
+- HTML 버튼은 `id="favorite-toggle"`(단수)인데 JS는 `document.getElementById('favorites-toggle')`(복수)를 찾음 -> `getElementById`가 못 찾아서 `null` 반환 -> `null.addEventListener(...)` 호출하려다 `TypeError` 발생.
+- 이 코드가 함수 안이 아니라 **스크립트 최상위 레벨**에 있어서, 에러가 나는 순간 그 아래 코드는 전부 실행이 안 됨. 마침 맨 마지막 줄의 `init()` 호출이 이 에러보다 아래에 있어서, 이 오타 하나 때문에 **페이지 로드 시 영화 목록이 아예 하나도 안 뜨는** 전면 장애로 이어짐.
+- 교훈: 스크립트 최상위(top-level)에 있는 동기 코드는 하나만 에러가 나도 그 아래 전체가 멈춘다는 걸 체감. id/클래스명은 HTML과 JS 양쪽에 흩어져 있어서 오타에 특히 취약함.
+
+### 즐겨찾기 버그 2 - class와 data 어트리뷰트를 헷갈림
+
+- 카드의 즐겨찾기 버튼을 `class="favorite-btn data-favorite"`처럼 만들어서, `data-favorite`가 실제 커스텀 어트리뷰트가 아니라 그냥 class 이름 문자열 중 하나가 되어버림.
+- 클릭 핸들러는 `event.target.closest('[data-favorite]')`로 **어트리뷰트**를 찾는데, class 안에 같은 글자가 들어있어도 매칭이 안 됨 -> 버튼을 눌러도 이 분기를 못 타고 그대로 "카드 클릭" 로직(모달 열기)으로 흘러가버림 -> 즐겨찾기 토글이 전혀 동작 안 하고 클릭할 때마다 모달만 열림.
+- 수정: `class="favorite-btn" data-favorite`처럼 class와 어트리뷰트를 분리해서 작성해야 함.
+
+### 즐겨찾기 토글 시 목록이 깜빡이는 문제 - 불필요한 재요청 캐싱으로 해결
+
+- "즐겨찾기" 보기는 `localStorage`에서 즉시 읽어와 동기적으로 렌더링되어 안 깜빡이는데, "전체보기"로 돌아갈 때마다 `init()`을 다시 호출해서 매번 `renderMessage('불러오는 중...')`로 화면을 비웠다가 네트워크 요청 후 다시 채우는 과정이 반복되어 깜빡임 발생.
+- 이미 페이지 로드 시 한 번 받아온 것과 동일한 인기 영화 목록을 토글할 때마다 또 요청하는 것도 낭비.
+- 해결: `popularMoviesCache` 변수에 최초 fetch 결과를 저장해두고, "전체보기" 토글 시 재요청 없이 `getMovies(popularMoviesCache)`로 캐시를 즉시 렌더링. 첫 로드 이후로는 네트워크 요청 없이 두 뷰 다 동기적으로 즉시 전환됨.
+- 캐시를 재사용해도 별(★/☆) 표시는 안 어긋남 - `getMovies`가 렌더링할 때마다 `isFavorite()`으로 그 자리에서 `localStorage`를 다시 확인하기 때문에 즐겨찾기 상태만큼은 항상 최신으로 반영됨.
