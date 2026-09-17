@@ -9,6 +9,13 @@ function normalizeMovie(tmdbMovie) {
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
+const NO_POSTER_IMAGE = 'data:image/svg+xml,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300">' +
+  '<rect width="100%" height="100%" fill="#2a2a2a"/>' +
+  '<text x="50%" y="50%" fill="#6d6d6d" font-size="16" text-anchor="middle" dy=".3em">포스터 없음</text>' +
+  '</svg>'
+);
+
 async function fetchPopularMovies() {
   const response = await fetch(`${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`);
   if (!response.ok) throw new Error('영화 목록을 불러오지 못했습니다.');
@@ -42,7 +49,7 @@ function closeModal() {
 function renderModalContent(movie) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : '개봉일 미정';
   const genreNames = movie.genres.map(genre => genre.name).join(', ') || '장르 정보 없음';
-  const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '';
+  const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : NO_POSTER_IMAGE;
 
   movieModal.querySelector('.modal-poster').src = posterUrl;
   movieModal.querySelector('.modal-poster').alt = movie.title;
@@ -105,7 +112,7 @@ function getMovies(movieArray) {
     card.classList.add('movie-card');
     card.dataset.id = movie.id;
 
-    const postUrl = movie.path;
+    const postUrl = movie.path || NO_POSTER_IMAGE;
 
     card.innerHTML = `
     <img src="${postUrl}" alt="${movie.title}">
