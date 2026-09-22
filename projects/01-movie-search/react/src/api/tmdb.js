@@ -16,3 +16,9 @@ export async function fetchPopularMovies(signal) {
   return data.results;
 }
 
+export async function fetchSearchMovies(keyword, signal) {
+  const response = await fetch(`${TMDB_BASE_URL}/search/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR&query=${encodeURIComponent(keyword)}`, { signal });
+  if (!response.ok) throw new Error('검색에 실패했습니다.');
+  const data = await response.json();
+  return data.results;
+}
