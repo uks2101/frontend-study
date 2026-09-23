@@ -22,3 +22,9 @@ export async function fetchSearchMovies(keyword, signal) {
   const data = await response.json();
   return data.results;
 }
+
+export async function fetchMovieDetail(id, signal) {
+  const response = await fetch(`${TMDB_BASE_URL}/movie/${id}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=ko-KR`, {signal});
+  if (!response.ok) throw new Error('상세 정보를 불러오지 못했습니다.');
+  return response.json();
+}
