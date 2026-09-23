@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import MovieCard from './components/MovieCard'
-import { normalizeMovie, fetchPopularMovies, fetchSearchMovies } from './api/tmdb'
+import MovieModal from './components/MovieModal'
+import { normalizeMovie, fetchPopularMovies, fetchSearchMovies, fetchMovieDetail } from './api/tmdb'
 import { useDebounce } from './hooks/useDebounce'
 import { getFavorites, saveFavorites } from './utils/favorites';
 
@@ -13,6 +14,9 @@ function App() {
   const [keyword, setKeyword] = useState('');
   const debouncedKeyword = useDebounce(keyword, 300);
   const [favorites, setFavorites] = useState(() => getFavorites());
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [movieDetail, setMovieDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -67,11 +71,47 @@ function App() {
             movie={movie}
             isFavorite={favorites.some(f => f.id === movie.id)}
             onToggleFavorite={() => handleToggleFavorite(movie)}
+            onSelect={() => setSelectedMovieId(movie.id)}
           />
         ))}
       </ul>
     );
   }
+
+  useEffect(() => {
+    if (!selectedMovieId) return;
+
+    const controller = new AbortController();
+    setDetailLoading(true);
+
+    async function load() {
+      try {
+        const detail = await fetchMovieDetail(selectedMovieId, controller.signal);
+        setMovieDetail(detail);
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        console.error(err);
+      } finally {
+        setDetailLoading(false);
+      }
+    }
+
+    load();
+    return () => controller.abort();
+  }, [selectedMovieId]);
+
+  function handleCloseModal() {
+    setSelectedMovieId(null);
+    setMovieDetail(null);
+  }
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') handleCloseModal();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <main>
@@ -92,6 +132,15 @@ function App() {
         <h1>인기 영화 목록</h1>
         {content}
       </section>
+      {selectedMovieId && (
+        <MovieModal 
+          movie={movieDetail}
+          loading={detailLoading}
+          isFavorite={movieDetail ? favorites.some(f => f.id === movieDetail.id) : false}
+          onClose={handleCloseModal}
+          onToggleFavorite={() => handleToggleFavorite(normalizeMovie(movieDetail))}
+        />
+      )}
     </main>
   )
 }
