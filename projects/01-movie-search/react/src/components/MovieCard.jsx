@@ -1,11 +1,7 @@
-import { useState } from 'react';
-
-function MovieCard({ movie }) {
-  const [isFavorite, setIsFavorite] = useState(false);
-
+function MovieCard({ movie, isFavorite, onToggleFavorite }) {
   function handleFavoriteClick(event) {
     event.stopPropagation();
-    setIsFavorite(!isFavorite);
+    onToggleFavorite();
   }
 
   return (

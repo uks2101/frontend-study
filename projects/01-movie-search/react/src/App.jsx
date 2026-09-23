@@ -3,6 +3,7 @@ import './App.css'
 import MovieCard from './components/MovieCard'
 import { normalizeMovie, fetchPopularMovies, fetchSearchMovies } from './api/tmdb'
 import { useDebounce } from './hooks/useDebounce'
+import { getFavorites, saveFavorites } from './utils/favorites';
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -11,6 +12,7 @@ function App() {
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState('');
   const debouncedKeyword = useDebounce(keyword, 300);
+  const [favorites, setFavorites] = useState(() => getFavorites());
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -39,18 +41,33 @@ function App() {
     return () => controller.abort();
   }, [debouncedKeyword]);
 
+  function handleToggleFavorite(movie) {
+    const exists = favorites.some(fav => fav.id === movie.id);
+    const updated = exists ? favorites.filter(fav => fav.id !== movie.id) : [...favorites, movie];
+
+    setFavorites(updated);
+    saveFavorites(updated);
+  }
+
+  const displayedMovies = showingFavoritesOnly ? favorites : movies;
+
   let content;
   if (loading) {
     content = <p className="empty">불러오는 중...</p>
   } else if (error) {
     content = <p className="empty">{error}</p>
-  } else if (movies.length === 0) {
+  } else if (displayedMovies.length === 0) {
     content = <p className="empty">검색 결과가 없습니다.</p>
   } else {
     content = (
       <ul className="movie-list">
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+        {displayedMovies.map((movie) => (
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            isFavorite={favorites.some(f => f.id === movie.id)}
+            onToggleFavorite={() => handleToggleFavorite(movie)}
+          />
         ))}
       </ul>
     );
