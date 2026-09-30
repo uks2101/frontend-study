@@ -9,6 +9,9 @@ let memberPhoneInput = document.getElementById('member-phone');
 let memberJoinedInput = document.getElementById('member-joined');
 let memberStatusInput = document.getElementById('member-status');
 let memberListEl = document.getElementById('member-list');
+let resultCountEl = document.getElementById('result-count');
+let emptyStateEl = document.getElementById('empty-state');
+let memberTableEl = document.getElementById('member-table');
 
 const selectedIds = new Set();
 let deleteSelectedBtn = document.getElementById('delete-selected-btn');
@@ -90,6 +93,16 @@ function renderMembers() {
       return 0;
     });
   };
+
+  if (filtered.length === 0) {
+    memberTableEl.hidden = true;
+    emptyStateEl.hidden = false;
+  } else if (filtered.length > 0) {
+    memberTableEl.hidden = false;
+    emptyStateEl.hidden = true;
+  }
+
+  resultCountEl.textContent = `총 ${members.length}명 중 ${filtered.length}명 표시`;
 
   memberListEl.innerHTML = filtered.map((member) => {
     return renderRow(member);
