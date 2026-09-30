@@ -2,34 +2,62 @@
 
 * {margin: 0; padding: 0; box-sizing: border-box;}
 html {font-family: sans-serif;}
-body {display: flex; justify-content: center;}
+body {display: flex; justify-content: center; background-color: #f3f4f6; min-height: 100vh; padding: 32px 16px;}
 
-.container {display: flex; flex-direction: column; width: 100%; max-width: 900px;}
-header {padding: 20px 0;}
-header h1 {font-size: 26px;}
+.container {display: flex; flex-direction: column; width: 100%; max-width: 900px; background-color: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px 28px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);}
+header {padding: 4px 0 20px;}
+header h1 {font-size: 22px; font-weight: 700; color: #111827;}
 main {display: flex; flex-direction: column;}
 section {display: flex; flex-direction: column;}
-section + section {margin-top: 50px;}
-section > div + div {padding-top: 20px;}
-.search-wrap {display: flex; align-items: center;}
-.search-wrap input {height: 44px; min-width: 250px; padding: 0 12px; outline: none;}
-.status-wrap {display: flex; align-items: center; justify-content: space-between;}
-.status-wrap > select {height: 32px; padding: 0 20px; outline: none;}
-.status-wrap > div {display: flex; align-items: center;}
-.status-wrap > div > button {height: 32px; padding: 0 14px; color: #fff; border-radius: 6px; font-size: 14px; cursor: pointer;}
-.status-wrap > div > button:disabled {opacity: 0.5; cursor: not-allowed;}
-.status-wrap > div > button + button {margin-left: 4px;}
-.status-wrap > div > button:first-of-type {background-color: blue; border: none;}
-.status-wrap > div > button:last-of-type {background-color: red; border: none;}
-#member-table :where(th, td) {text-align: center; padding: 3px 0;}
+section + section {margin-top: 24px;}
+section > div + div {padding-top: 16px;}
 
-#member-modal {position: fixed; top: 0; left: 0; bottom: 0; right: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.3);}
+/* toolbar */
+.search-wrap {display: flex; align-items: center;}
+.search-wrap input {height: 40px; min-width: 250px; padding: 0 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.15s;}
+.search-wrap input:focus {border-color: #6366f1;}
+
+.status-wrap {display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;}
+.status-wrap > select {height: 36px; padding: 0 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; color: #374151; outline: none; cursor: pointer;}
+.status-wrap > select:focus {border-color: #6366f1;}
+.status-wrap > div {display: flex; align-items: center;}
+.status-wrap > div > button {height: 36px; padding: 0 16px; border: none; border-radius: 8px; color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s;}
+.status-wrap > div > button:hover {opacity: 0.9;}
+.status-wrap > div > button:disabled {opacity: 0.4; cursor: not-allowed;}
+.status-wrap > div > button + button {margin-left: 8px;}
+.status-wrap > div > button:first-of-type {background-color: #4f46e5;}
+.status-wrap > div > button:last-of-type {background-color: #dc2626;}
+
+/* result count / table */
+#result-count {font-size: 13px; color: #6b7280; padding-bottom: 8px;}
+
+#member-table {width: 100%; border-collapse: collapse; font-size: 14px;}
+#member-table thead {background-color: #f9fafb;}
+#member-table th {font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb;}
+#member-table :where(th, td) {text-align: center; padding: 10px 8px;}
+#member-table th[data-sort] {cursor: pointer; user-select: none;}
+#member-table th[data-sort]:hover {color: #4f46e5;}
+#member-table tbody tr {border-bottom: 1px solid #f3f4f6;}
+#member-table tbody tr:hover {background-color: #f9fafb;}
+#member-table td {color: #111827;}
+#member-table [data-action] {height: 28px; padding: 0 10px; margin: 0 2px; border: 1px solid #d1d5db; border-radius: 6px; background-color: #fff; font-size: 12px; color: #374151; cursor: pointer;}
+#member-table [data-action]:hover {background-color: #f3f4f6;}
+#member-table [data-action="delete"] {color: #dc2626; border-color: #fecaca;}
+#member-table [data-action="delete"]:hover {background-color: #fef2f2;}
+
+.empty-state {padding: 32px 0; text-align: center; color: #9ca3af; font-size: 14px;}
+
+/* modal */
+#member-modal {position: fixed; top: 0; left: 0; bottom: 0; right: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(17, 24, 39, 0.45); padding: 16px;}
 #member-modal[hidden] {display: none;}
-#member-form {display: flex; flex-direction: column; background-color: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 270px;}
-#member-form label {padding: 5px 0; font-size: 14px; display: flex; align-items: center; justify-content: space-between;}
-#member-form label input {height: 24px; padding: 5px;}
-#member-form label select {height: 24px; padding: 0 10px;}
-#member-form div {display: flex; align-items: center; justify-content: center; padding-top: 15px;}
-#member-form div button {padding: 4px 10px;}
-#member-form div button + button {margin-left: 4px;}
-#member-form p[data-error] {color: red; font-size: 12px;}
+#member-form {display: flex; flex-direction: column; background-color: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 320px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);}
+#member-form label {padding: 8px 0; font-size: 14px; color: #374151; display: flex; align-items: center; justify-content: space-between; gap: 12px;}
+#member-form label input,
+#member-form label select {height: 32px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none;}
+#member-form label input:focus,
+#member-form label select:focus {border-color: #6366f1;}
+#member-form div {display: flex; align-items: center; justify-content: center; padding-top: 18px; gap: 8px;}
+#member-form div button {height: 36px; padding: 0 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none;}
+#member-form div button:first-of-type {background-color: #4f46e5; color: #fff;}
+#member-form div button:last-of-type {background-color: #f3f4f6; color: #374151;}
+#member-form p[data-error] {color: #dc2626; font-size: 12px; min-height: 14px; text-align: right;}
