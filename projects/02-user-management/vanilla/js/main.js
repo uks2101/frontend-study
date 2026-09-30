@@ -10,6 +10,10 @@ let memberJoinedInput = document.getElementById('member-joined');
 let memberStatusInput = document.getElementById('member-status');
 let memberListEl = document.getElementById('member-list');
 
+const selectedIds = new Set();
+let deleteSelectedBtn = document.getElementById('delete-selected-btn');
+let selectAllCheckbox = document.getElementById('select-all');
+
 let members = [];
 
 function generateId() {
@@ -42,9 +46,10 @@ function saveMembers(list) {
 }
 
 function renderRow(member) {
+  const checked = selectedIds.has(member.id) ? 'checked' : '';
   return `
     <tr>
-      <td><input type="checkbox" class="row-checkbox" data-id="${member.id}"></td>
+      <td><input type="checkbox" class="row-checkbox" data-id="${member.id}" ${checked}></td>
       <td>${member.name}</td>
       <td>${member.email}</td>
       <td>${member.phone}</td>
@@ -194,3 +199,42 @@ memberListEl.addEventListener('click', (event) => {
     deleteMember(id);
   }
 });
+
+function updateDeleteSelectedButton() {
+  selectedIds.size === 0 ? deleteSelectedBtn.disabled = true : deleteSelectedBtn.disabled = false;
+}
+
+memberListEl.addEventListener('change', (event) => {
+  const checkbox = event.target.closest('.row-checkbox');
+  if (!checkbox) return;
+
+  const { id } = checkbox.dataset;
+  checkbox.checked === true ? selectedIds.add(id) : selectedIds.delete(id);
+
+  updateDeleteSelectedButton();
+});
+
+selectAllCheckbox.addEventListener('change', (event) => {
+  if (event.target.checked) {
+    members.forEach((member) => selectedIds.add(member.id));
+  } else {
+    selectedIds.clear();
+  }
+
+  renderMembers();
+  updateDeleteSelectedButton();
+});
+
+function deleteSelectedMembers() {
+  if (selectedIds.size === 0) return;
+
+  const confirmed = confirm(`${selectedIds.size} 명 삭제하시겠습니까?`);
+  if (!confirmed) return;
+
+  members = members.filter((member) => !selectedIds.has(member.id));
+  selectedIds.clear();
+  saveMembers(members);
+  renderMembers();
+}
+
+deleteSelectedBtn.addEventListener('click', deleteSelectedMembers);
