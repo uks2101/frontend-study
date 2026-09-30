@@ -12,3 +12,6 @@ const SEED_MEMBERS = [
   { name: '최지아', email: 'jia.choi@example.com', phone: '010-4567-8901', joinedAt: '2025-01-09', status: 'active' },
   { name: '정하윤', email: 'hayoon.jung@example.com', phone: '010-5678-9012', joinedAt: '2024-08-21', status: 'inactive' },
 ];
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^0\d{1,2}-\d{3,4}-\d{4}$/;
