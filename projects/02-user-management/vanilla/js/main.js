@@ -14,6 +14,13 @@ const selectedIds = new Set();
 let deleteSelectedBtn = document.getElementById('delete-selected-btn');
 let selectAllCheckbox = document.getElementById('select-all');
 
+let searchKeyword = '';
+let searchInput = document.getElementById('search-input');
+
+let statusFilter = 'all';
+let sortState = { key: null, order: 'asc' };
+let statusFilterSelect = document.getElementById('status-filter');
+
 let members = [];
 
 function generateId() {
@@ -64,7 +71,27 @@ function renderRow(member) {
 }
 
 function renderMembers() {
-  memberListEl.innerHTML = members.map((member) => {
+  const keyword = searchKeyword.trim().toLowerCase();
+
+  const filtered = members.filter((member) => {
+    const matchesKeyword =
+      !keyword ||
+      member.name.toLowerCase().includes(keyword) ||
+      member.email.toLowerCase().includes(keyword);
+    const matchesStatus = statusFilter === 'all' || member.status === statusFilter;
+    return matchesKeyword && matchesStatus;
+  });
+
+  if (sortState.key) {
+    filtered.sort((a, b) => {
+      const key = sortState.key;
+      if (a[key] < b[key]) return sortState.order === 'asc' ? -1 : 1;
+      if (a[key] > b[key]) return sortState.order === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  memberListEl.innerHTML = filtered.map((member) => {
     return renderRow(member);
   }).join('');
 }
@@ -238,3 +265,37 @@ function deleteSelectedMembers() {
 }
 
 deleteSelectedBtn.addEventListener('click', deleteSelectedMembers);
+
+function debounce(fn, delay) {
+  let timerId = null;
+  return (...args) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => fn(...args), delay);
+  };
+}
+
+const handleSearchInput = debounce((event) => {
+  searchKeyword = event.target.value;
+  renderMembers();
+}, SEARCH_DEBOUNCE_DELAY);
+
+searchInput.addEventListener('input', handleSearchInput);
+
+statusFilterSelect.addEventListener('change', (event) => {
+  statusFilter = event.target.value;
+  renderMembers();
+});
+
+document.querySelector('#member-table thead').addEventListener('click', (event) => {
+  const th = event.target.closest('[data-sort]');
+  if (!th) return;
+
+  const key = th.dataset.sort;
+  if (sortState.key === key) {
+    sortState.order = sortState.order === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortState = { key, order: 'asc' };
+  }
+
+  renderMembers();
+});

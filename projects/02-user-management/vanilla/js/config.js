@@ -15,3 +15,5 @@ const SEED_MEMBERS = [
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^0\d{1,2}-\d{3,4}-\d{4}$/;
+
+const SEARCH_DEBOUNCE_DELAY = 300;
