@@ -1,0 +1,35 @@
+@charset "utf-8";
+
+* {margin: 0; padding: 0; box-sizing: border-box;}
+html {font-family: sans-serif;}
+body {display: flex; justify-content: center;}
+
+.container {display: flex; flex-direction: column; width: 100%; max-width: 900px;}
+header {padding: 20px 0;}
+header h1 {font-size: 26px;}
+main {display: flex; flex-direction: column;}
+section {display: flex; flex-direction: column;}
+section + section {margin-top: 50px;}
+section > div + div {padding-top: 20px;}
+.search-wrap {display: flex; align-items: center;}
+.search-wrap input {height: 44px; min-width: 250px; padding: 0 12px; outline: none;}
+.status-wrap {display: flex; align-items: center; justify-content: space-between;}
+.status-wrap > select {height: 32px; padding: 0 20px; outline: none;}
+.status-wrap > div {display: flex; align-items: center;}
+.status-wrap > div > button {height: 32px; padding: 0 14px; color: #fff; border-radius: 6px; font-size: 14px; cursor: pointer;}
+.status-wrap > div > button:disabled {opacity: 0.5; cursor: not-allowed;}
+.status-wrap > div > button + button {margin-left: 4px;}
+.status-wrap > div > button:first-of-type {background-color: blue; border: none;}
+.status-wrap > div > button:last-of-type {background-color: red; border: none;}
+#member-table :where(th, td) {text-align: center; padding: 3px 0;}
+
+#member-modal {position: fixed; top: 0; left: 0; bottom: 0; right: 0; display: flex; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.3);}
+#member-modal[hidden] {display: none;}
+#member-form {display: flex; flex-direction: column; background-color: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 270px;}
+#member-form label {padding: 5px 0; font-size: 14px; display: flex; align-items: center; justify-content: space-between;}
+#member-form label input {height: 24px; padding: 5px;}
+#member-form label select {height: 24px; padding: 0 10px;}
+#member-form div {display: flex; align-items: center; justify-content: center; padding-top: 15px;}
+#member-form div button {padding: 4px 10px;}
+#member-form div button + button {margin-left: 4px;}
+#member-form p[data-error] {color: red; font-size: 12px;}

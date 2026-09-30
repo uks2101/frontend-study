@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>회원 관리</h1>
+    </header>
+    <main>
+      <section>
+        <div class="search-wrap">
+          <input type="text" id="search-input" placeholder="이름 또는 이메일 검색">
+        </div>
+        <div class="status-wrap">
+          <select id="status-filter">
+            <option value="all">전체</option>
+            <option value="active">활성</option>
+            <option value="inactive">휴면</option>
+          </select>
+          <div>
+            <button type="button" id="add-member-btn">회원 등록</button>
+            <button type="button" id="delete-selected-btn" disabled>회원 삭제</button>
+          </div>
+        </div>
+      </section>
+      <section>
+        <table id="member-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select-all"></th>
+              <th data-sort="name">이름</th>
+              <th>이메일</th>
+              <th>전화번호</th>
+              <th data-sort="joinedAt">가입일</th>
+              <th>상태</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="member-list"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <div id="member-modal" hidden>
+    <form id="member-form">
+      <input type="hidden" id="member-id">
+      <label>이름<input type="text" id="member-name"></label>
+      <p data-error="name"></p>
+      <label>이메일<input type="email" id="member-email"></label>
+      <p data-error="email"></p>
+      <label>전화번호<input type="text" id="member-phone"></label>
+      <p data-error="phone"></p>
+      <label>가입일<input type="date" id="member-joined"></label>
+      <p data-error="joinedAt"></p>
+      <label>상태<select id="member-status"><option value="active">활성</option><option value="inactive">휴면</option></select></label>
+      <p data-error="status"></p>
+      <div>
+        <button type="submit">저장</button>
+        <button type="button" id="cancel-btn">취소</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
