@@ -12,6 +12,7 @@ let memberListEl = document.getElementById('member-list');
 let resultCountEl = document.getElementById('result-count');
 let emptyStateEl = document.getElementById('empty-state');
 let memberTableEl = document.getElementById('member-table');
+let sortIndicatorEls = document.querySelectorAll('[data-indicator]');
 
 const selectedIds = new Set();
 let deleteSelectedBtn = document.getElementById('delete-selected-btn');
@@ -107,6 +108,19 @@ function renderMembers() {
   memberListEl.innerHTML = filtered.map((member) => {
     return renderRow(member);
   }).join('');
+
+  updateSortIndicators();
+}
+
+function updateSortIndicators() {
+  sortIndicatorEls.forEach((el) => {
+    const key = el.dataset.indicator;
+    if (key !== sortState.key) {
+      el.textContent = '';
+      return;
+    }
+    el.textContent = sortState.order === 'asc' ? ' ▲' : ' ▼';
+  });
 }
 
 members = loadMembers();

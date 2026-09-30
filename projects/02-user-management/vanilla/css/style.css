@@ -37,6 +37,7 @@ section > div + div {padding-top: 16px;}
 #member-table :where(th, td) {text-align: center; padding: 10px 8px;}
 #member-table th[data-sort] {cursor: pointer; user-select: none;}
 #member-table th[data-sort]:hover {color: #4f46e5;}
+.sort-indicator {display: inline-block; font-size: 11px; color: #4f46e5; margin-left: 4px;}
 #member-table tbody tr {border-bottom: 1px solid #f3f4f6;}
 #member-table tbody tr:hover {background-color: #f9fafb;}
 #member-table td {color: #111827;}
