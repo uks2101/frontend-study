@@ -13,19 +13,25 @@ function MemberTable({
   const allSelected = members.length > 0 && members.every((member) => selectedIds.has(member.id));
 
   return (
-    <table>
+    <table id="member-table">
       <thead>
         <tr>
           <th>
             <input type="checkbox" checked={allSelected} onChange={(event) => onToggleSelectAll(event.target.checked)} />
           </th>
-          <th onClick={() => onSortChange('name')}>
-            이름{sortState.key === 'name' ? (sortState.order === 'asc' ? ' ▲' : ' ▼') : ''}
+          <th data-sort="name" onClick={() => onSortChange('name')}>
+            이름
+            <span className="sort-indicator">
+              {sortState.key === 'name' ? (sortState.order === 'asc' ? ' ▲' : ' ▼') : ''}
+            </span>
           </th>
           <th>이메일</th>
           <th>전화번호</th>
-          <th onClick={() => onSortChange('joinedAt')}>
-            가입일{sortState.key === 'joinedAt' ? (sortState.order === 'asc' ? ' ▲' : ' ▼') : ''}
+          <th data-sort="joinedAt" onClick={() => onSortChange('joinedAt')}>
+            가입일
+            <span className="sort-indicator">
+              {sortState.key === 'joinedAt' ? (sortState.order === 'asc' ? ' ▲' : ' ▼') : ''}
+            </span>
           </th>
           <th>상태</th>
           <th>관리</th>

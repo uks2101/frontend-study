@@ -12,8 +12,8 @@ function MemberRow({ member, selected, onToggleSelect, onEdit, onDelete }) {
       <td>{member.joinedAt}</td>
       <td>{STATUS_LABEL[member.status]}</td>
       <td>
-        <button type="button" onClick={() => onEdit(member)}>수정</button>
-        <button type="button" onClick={() => onDelete(member.id)}>삭제</button>
+        <button type="button" data-action="edit" onClick={() => onEdit(member)}>수정</button>
+        <button type="button" data-action="delete" onClick={() => onDelete(member.id)}>삭제</button>
       </td>
     </tr>
   );

@@ -3,6 +3,7 @@ import { useMembers } from './hooks/useMembers';
 import MemberFormModal from './components/MemberFormModal';
 import MemberTable from './components/MemberTable';
 import Toolbar from './components/Toolbar';
+import './App.css';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,36 +98,48 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="container">
+      <header>
+        <h1>회원 관리</h1>
+      </header>
+
+      <main>
+        <Toolbar
+          onAdd={openAddModal}
+          onDeleteSelected={handleDeleteSelected}
+          deleteDisabled={selectedIds.size === 0}
+          onSearchChange={setSearchKeyword}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
+
+        <section>
+          <p className="result-count">
+            {`총 ${members.length}명 중 ${visibleMembers.length}명 표시`}
+          </p>
+
+          {visibleMembers.length === 0 ? (
+            <p className="empty-state">표시할 회원이 없습니다.</p>
+          ) : (
+            <MemberTable
+              members={visibleMembers}
+              selectedIds={selectedIds}
+              onToggleSelect={toggleSelect}
+              onToggleSelectAll={toggleSelectAll}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
+              sortState={sortState}
+              onSortChange={handleSortChange}
+            />
+          )}
+        </section>
+      </main>
+
       {isModalOpen && (
         <MemberFormModal
           editingMember={editingMember}
           onClose={closeModal}
           onSave={handleSave}
-        />
-      )}
-
-      <Toolbar
-        onAdd={openAddModal}
-        onDeleteSelected={handleDeleteSelected}
-        deleteDisabled={selectedIds.size === 0}
-        onSearchChange={setSearchKeyword}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-      />
-
-      {visibleMembers.length === 0 ? (
-        <p>표시할 회원이 없습니다.</p>
-      ) : (
-        <MemberTable
-          members={visibleMembers}
-          selectedIds={selectedIds}
-          onToggleSelect={toggleSelect}
-          onToggleSelectAll={toggleSelectAll}
-          onEdit={openEditModal}
-          onDelete={handleDelete}
-          sortState={sortState}
-          onSortChange={handleSortChange}
         />
       )}
     </div>

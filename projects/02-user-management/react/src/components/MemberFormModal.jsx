@@ -68,8 +68,8 @@ function MemberFormModal({ editingMember, onClose, onSave }) {
         </label>
 
         <div>
-          <button type="submit">저장</button>
-          <button type="button" onClick={onClose}>취소</button>
+          <button type="submit" className="btn-save">저장</button>
+          <button type="button" className="btn-cancel" onClick={onClose}>취소</button>
         </div>
       </form>
     </div>
