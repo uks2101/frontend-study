@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useMembers } from './hooks/useMembers';
 import MemberFormModal from './components/MemberFormModal';
 import MemberTable from './components/MemberTable';
+import Toolbar from './components/Toolbar';
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,16 +10,30 @@ function App() {
   const { members, addMember, updateMember, deleteMembers } = useMembers();
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [sortState, setSortState] = useState({ key: null, order: 'asc' });
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  const sortedMembers = useMemo(() => {
-    if (!sortState.key) return members;
-    return [...members].sort((a, b) => {
+  const visibleMembers = useMemo(() => {
+    const keyword = searchKeyword.trim().toLowerCase();
+
+    const filtered = members.filter((member) => {
+      const matchesKeyword =
+        !keyword ||
+        member.name.toLowerCase().includes(keyword) ||
+        member.email.toLowerCase().includes(keyword);
+      const matchesStatus = statusFilter === 'all' || member.status === statusFilter;
+      return matchesKeyword && matchesStatus;
+    });
+
+    if (!sortState.key) return filtered;
+
+    return [...filtered].sort((a, b) => {
       const key = sortState.key;
       if (a[key] < b[key]) return sortState.order === 'asc' ? -1 : 1;
       if (a[key] > b[key]) return sortState.order === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [members, sortState]);
+  }, [members, searchKeyword, statusFilter, sortState]);
 
   function openAddModal() {
     setEditingMember(null);
@@ -57,7 +72,7 @@ function App() {
   }
 
   function toggleSelectAll(checked) {
-    setSelectedIds(checked ? new Set(sortedMembers.map((member) => member.id)) : new Set());
+    setSelectedIds(checked ? new Set(visibleMembers.map((member) => member.id)) : new Set());
   }
 
   function handleDelete(id) {
@@ -83,8 +98,6 @@ function App() {
 
   return (
     <div>
-      <button type='button' onClick={openAddModal}>회원 등록</button>
-
       {isModalOpen && (
         <MemberFormModal
           editingMember={editingMember}
@@ -93,16 +106,29 @@ function App() {
         />
       )}
 
-      <MemberTable
-        members={sortedMembers}
-        selectedIds={selectedIds}
-        onToggleSelect={toggleSelect}
-        onToggleSelectAll={toggleSelectAll}
-        onEdit={openEditModal}
-        onDelete={handleDelete}
-        sortState={sortState}
-        onSortChange={handleSortChange}
+      <Toolbar
+        onAdd={openAddModal}
+        onDeleteSelected={handleDeleteSelected}
+        deleteDisabled={selectedIds.size === 0}
+        onSearchChange={setSearchKeyword}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
       />
+
+      {visibleMembers.length === 0 ? (
+        <p>표시할 회원이 없습니다.</p>
+      ) : (
+        <MemberTable
+          members={visibleMembers}
+          selectedIds={selectedIds}
+          onToggleSelect={toggleSelect}
+          onToggleSelectAll={toggleSelectAll}
+          onEdit={openEditModal}
+          onDelete={handleDelete}
+          sortState={sortState}
+          onSortChange={handleSortChange}
+        />
+      )}
     </div>
   );
 }
