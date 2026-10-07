@@ -1,13 +1,21 @@
 import { http, HttpResponse, delay } from 'msw';
 import { db } from './db';
+import { getScenario } from './scenario';
 
 export const handlers = [
   http.get('/api/products', async () => {
     await delay(500);
+
+    const scenario = getScenario();
+    if (scenario === 'error') {
+      return HttpResponse.json({ message: '서버에 문제가 발생했습니다.' }, { status: 500 });
+    }
+
+    const products = scenario === 'empty' ? [] : db.products;
     return HttpResponse.json({
-      products: db.products,
-      total: db.products.length,
-    })
+      products,
+      total: products.length
+    });
   }),
 
   http.get('/api/products/:id', async ({ params }) => {
