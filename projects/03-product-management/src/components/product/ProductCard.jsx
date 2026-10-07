@@ -20,7 +20,7 @@ export default function ProductCard({ product }) {
             <del>{formatPrice(price)}</del>
           </p>
           <p className="product-card__rating">
-            <span aria-hidden="true">*</span> {rating.toFixed(1)}
+            <span aria-hidden="true">★</span> {rating.toFixed(1)}
           </p>
         </div>
       </Link>

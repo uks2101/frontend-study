@@ -8,7 +8,7 @@ export default function ProductListPage() {
   const { status, data, error, refetch } = useProducts();
 
   function renderContent() {
-    if (status === 'loading') {
+    if (status === 'pending') {
       return <ProductListSkeleton />;
     }
 
