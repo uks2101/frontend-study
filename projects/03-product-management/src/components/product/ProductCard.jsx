@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { formatPrice, getSalePrice } from '../../utils/format';
 
 export default function ProductCard({ product }) {
-  const { id, title, brand, thumbnail, price, discountPercentage, rating } = product;
+  const { id, title, brand, description, thumbnail, price, discountPercentage, rating } = product;
   const salePrice = getSalePrice(price, discountPercentage);
 
   return (
@@ -14,6 +14,7 @@ export default function ProductCard({ product }) {
         <div className="product-card__body">
           <p className="product-card__brand">{brand}</p>
           <h3 className="product-card__title">{title}</h3>
+          <p className="product-card__desc">{description}</p>
           <p className="product-card__price">
             <span className="product-card__discount">{Math.round(discountPercentage)}%</span>
             <strong>{formatPrice(salePrice)}</strong>

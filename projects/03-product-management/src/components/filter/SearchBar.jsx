@@ -3,11 +3,11 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 export default function SearchBar({ value, onSearch }) {
   const [input, setInput] = useState(value);
-  const [prevValue, setsPrevValue] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
   const debouncedInput = useDebounce(input, 300);
 
   if (value !== prevValue) {
-    setsPrevValue(value);
+    setPrevValue(value);
     setInput(value);
   }
 

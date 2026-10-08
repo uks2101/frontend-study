@@ -19,7 +19,7 @@ export const handlers = [
       return HttpResponse.json({ message: '서버에 문제가 발생했습니다.' }, { status: 500 });
     }
     if (scenario === 'empty') {
-      return HttpResponse.json({ products: [], total: 0 });
+      return HttpResponse.json({ products: [], total: 0, page: 1, totalPages: 0 });
     }
 
     const params = new URL(request.url).searchParams;
@@ -28,8 +28,10 @@ export const handlers = [
     const minPrice = params.has('minPrice') ? Number(params.get('minPrice')) : null;
     const maxPrice = params.has('maxPrice') ? Number(params.get('maxPrice')) : null;
     const sort = params.get('sort') ?? 'latest';
+    const page = Math.max(1, Number(params.get('page')) || 1);
+    const limit = Math.max(1, Number(params.get('limit')) || 20);
 
-    const products = db.products
+    const filtered = db.products
     .filter((p) => !q || p.title.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q))
     .filter((p) => categories.length === 0 || categories.includes(p.category))
     .filter((p) => {
@@ -40,9 +42,13 @@ export const handlers = [
     })
     .toSorted(SORTERS[sort] ?? SORTERS.latest);
 
+    const start = (page - 1) * limit;
+
     return HttpResponse.json({
-      products,
-      total: products.length
+      products: filtered.slice(start, start + limit),
+      total: filtered.length,
+      page,
+      totalPages: Math.ceil(filtered.length / limit),
     });
   }),
 

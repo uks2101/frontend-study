@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useMatch } from 'react-router';
+import { Link, NavLink, Outlet, ScrollRestoration, useMatch } from 'react-router';
 
 export default function RootLayout() {
   const isProductDetail = useMatch('/products/:id');
@@ -17,6 +17,8 @@ export default function RootLayout() {
       <main className="main">
         <Outlet />
       </main>
+
+      <ScrollRestoration />
     </div>
   )
 }

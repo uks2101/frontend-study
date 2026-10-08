@@ -1,9 +1,13 @@
 import { request } from './client';
 import { toSearchParams } from '../utils/productFilters';
 
-export function getProducts(filters, { signal } = {}) {
-  const query = toSearchParams(filters).toString();
-  return request(query ? `/api/products?${query}` : '/api/products', { signal });
+export const PAGE_SIZE = 20;
+
+export function getProducts(filters, { page = 1, signal } = {}) {
+  const params = toSearchParams(filters);
+  params.set('page', page);
+  params.set('limit', PAGE_SIZE);
+  return request(`/api/products?${params}`, { signal });
 }
 
 export function getProduct(id, { signal } = {}) {

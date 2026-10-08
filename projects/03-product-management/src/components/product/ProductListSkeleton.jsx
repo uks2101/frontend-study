@@ -11,10 +11,10 @@ function ProductCardSkeleton() {
   )
 }
 
-export default function ProductListSkeleton({ count = 8 }) {
+export default function ProductListSkeleton({ count = 8, view = 'grid' }) {
   return (
     <div role="status" aria-label="상품을 불러오는 중">
-      <ul className="product-list" aria-hidden="true">
+      <ul className={`product-list product-list--${view}`} aria-hidden="true">
         {Array.from({ length: count }, (_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
