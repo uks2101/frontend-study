@@ -1,10 +1,10 @@
 import { useState, useEffect, useEffectEvent } from 'react';
 import { getCache, setCache, deleteCache } from '../utils/queryCache';
 
-export function useQuery({ queryKey, queryFn, staleTime = 60 * 1000 }) {
+export function useQuery({ queryKey, queryFn, staleTime = 60 * 1000, keepPreviousData = false }) {
   const key = JSON.stringify(queryKey);
 
-  const [result, setResult] = useState({ key: null, data: undefined, error: null });
+  const [result, setResult] = useState(() => ({ key, data: getCache(key)?.data, error: null }));
   const [reloadCount, setReloadCount] = useState(0);
 
   const runQuery = useEffectEvent((signal) => queryFn({ signal }));
@@ -35,8 +35,15 @@ export function useQuery({ queryKey, queryFn, staleTime = 60 * 1000 }) {
 
   const isCurrent = result.key === key;
   const error = isCurrent ? result.error : null;
-  const data = isCurrent && result.data !== undefined ? result.data : getCache(key)?.data;
+  let data = isCurrent && result.data !== undefined ? result.data : getCache(key)?.data;
+  let isPlaceholderData = false;
+
+  if (data === undefined && !error && keepPreviousData && result.data !== undefined) {
+    data = result.data;
+    isPlaceholderData = true;
+  }
+
   const status = error ? 'error' : data !== undefined ? 'success' : 'pending';
 
-  return { status, data, error, refetch };
+  return { status, data, error, isPlaceholderData, refetch };
 }
