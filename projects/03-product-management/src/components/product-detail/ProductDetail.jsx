@@ -56,7 +56,7 @@ export default function ProductDetail({ product }) {
 
           <p className="detail__desc">{description}</p>
 
-          <p className={`detail__stock${stock < LOW_STOCK ? ' detail_stock--low' : ''}`}>
+          <p className={`detail__stock${stock < LOW_STOCK ? ' detail__stock--low' : ''}`}>
             {isSoldOut ? '품절' : stock < LOW_STOCK ? `품절 임박! ${stock}개 남음` : '재고 있음'}
           </p>
 
