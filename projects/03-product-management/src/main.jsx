@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import { router } from './router'
+import CartProvider from './store/cart/CartProvider'
 import './index.css'
 
 async function enableMocking() {
@@ -14,7 +15,9 @@ async function enableMocking() {
 enableMocking().then(() => {
   createRoot(document.getElementById('root')).render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
     </StrictMode>
   )
 });
