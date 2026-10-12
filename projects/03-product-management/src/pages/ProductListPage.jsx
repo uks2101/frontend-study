@@ -80,7 +80,7 @@ export default function ProductListPage() {
           <div className="product-toolbar">
             <SearchBar value={filters.q} onSearch={setSearch} />
             <p className="product-toolbar__count">
-              {status === 'success' && `총 ${products.length} / 총 ${total}개`}
+              {status === 'success' && `${products.length} / 총 ${total}개`}
             </p>
             <SortSelect value={filters.sort} onChange={setSort} />
             <ViewToggle value={view} onChange={setView} />

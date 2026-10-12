@@ -20,7 +20,7 @@ export function useInfiniteQuery({
 
   useEffect(() => {
     const cached = getCache(key);
-    const isFresh = cached && Date.now() - cached.updateAt < staleTime;
+    const isFresh = cached && Date.now() - cached.updatedAt < staleTime;
     if (isFresh) return;
 
     const controller = new AbortController();
