@@ -14,6 +14,10 @@ export function getProduct(id, { signal } = {}) {
   return request(`/api/products/${id}`, { signal });
 }
 
+export function getRelatedProducts(id, { signal } = {}) {
+  return request(`/api/products/${id}/related`, { signal });
+}
+
 export function getCategories({ signal } = {}) {
   return request('/api/categories', { signal });
 }

@@ -62,6 +62,19 @@ export const handlers = [
     return HttpResponse.json(product);
   }),
 
+  http.get('/api/products/:id/related', async ({ params }) => {
+    await delay(400);
+    const product = db.products.find((p) => p.id === Number(params.id));
+
+    if (!product) {
+      return HttpResponse.json({ message: '상품을 찾을 수 없습니다.' }, { status: 404 });
+    }
+
+    const related = db.products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+    return HttpResponse.json(related);
+  }),
+
   http.get('/api/categories', async () => {
     await delay(300);
 

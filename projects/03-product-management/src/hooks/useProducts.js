@@ -1,5 +1,6 @@
+import { useQuery } from './useQuery';
 import { useInfiniteQuery } from './useInfiniteQuery';
-import { getProducts } from '../api/products';
+import { getProducts, getProduct, getRelatedProducts } from '../api/products';
 
 export function useProducts(filters) {
   return useInfiniteQuery({
@@ -8,5 +9,20 @@ export function useProducts(filters) {
     initialPageParam: 1,
     getNextPageParam: (lastPage) => (lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined),
     keepPreviousData: true
+  });
+}
+
+export function useProduct(id) {
+  return useQuery({
+    queryKey: ['product', id],
+    queryFn: ({ signal }) => getProduct(id, { signal })
+  });
+}
+
+export function useRelatedProducts(id) {
+  return useQuery({
+    queryKey: ['product', id, 'related'],
+    queryFn: ({ signal }) => getRelatedProducts(id, { signal }),
+    staleTime: 5 * 60 * 1000
   });
 }
