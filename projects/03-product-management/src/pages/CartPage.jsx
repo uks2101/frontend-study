@@ -4,10 +4,12 @@ import { getCartSummary } from '../store/cart/cartSelectors';
 import CartItem from '../components/cart/CartItem';
 import CartSummary from '../components/cart/CartSummary';
 import EmptyState from '../components/common/EmptyState';
+import { useToast } from '../store/toast/toastContext';
 
 export default function CartPage() {
   const { items } = useCart();
   const { toggleAll, removeChecked } = useCartActions();
+  const toast = useToast();
 
   if (items.length === 0) {
     return (
@@ -23,7 +25,12 @@ export default function CartPage() {
   const someChecked = summary.checkedCount > 0 && !allChecked;
 
   function handleOrder() {
-    console.log('주문하기', summary);
+    toast.info('데모 프로젝트라 주문 기능은 제공하지 않습니다.');
+  }
+
+  function handleRemoveChecked() {
+    removeChecked();
+    toast.info(`${summary.checkedCount}개 상품을 삭제했습니다.`);
   }
 
   return (
@@ -49,15 +56,15 @@ export default function CartPage() {
               type='button'
               className="btn btn--sm"
               disabled={summary.checkedCount === 0}
-              onClick={removeChecked}
+              onClick={handleRemoveChecked}
             >
               선택 삭제
             </button>
           </div>
 
           <ul className="cart-list">
-            {items.map((item) => (
-              <CartItem key={item.id} item={item} />
+            {items.map((item, index) => (
+              <CartItem key={item.id} item={item} index={index} />
             ))}
           </ul>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { useToast } from '../../store/toast/toastContext';
 import { formatPrice, getSalePrice } from '../../utils/format';
 import { useCart, useCartActions } from '../../store/cart/cartContext';
 import ImageGallery from './ImageGallery';
@@ -11,8 +12,9 @@ export default function ProductDetail({ product }) {
   const { id, title, brand, category, description, images, price, discountPercentage, rating, stock } = product;
   const { items } = useCart();
   const { addItem } = useCartActions();
+  const toast = useToast();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
-  const [addedMessage, setAddedMessage] = useState(null);
 
   const salePrice = getSalePrice(price, discountPercentage);
   const isSoldOut = stock === 0;
@@ -22,7 +24,9 @@ export default function ProductDetail({ product }) {
 
   function handleAddToCart() {
     addItem(product, quantity);
-    setAddedMessage(`${quantity}개를 장바구니에 담았습니다.`);
+    toast.success(`${quantity}개를 장바구니에 담았습니다.`, {
+      action: { label: '장바구니 보기', onClick: () => navigate('/cart') },
+    });
     setQuantity(1);
   }
 
@@ -82,12 +86,6 @@ export default function ProductDetail({ product }) {
           >
             {isSoldOut ? '품절' : canAdd ? '장바구니 담기' : '최대 수량 담김'}
           </button>
-
-          {addedMessage && (
-            <p className="detail__added" role="status">
-              {addedMessage} <Link to="/cart">장바구니 보기</Link>
-            </p>
-          )}
         </div>
       </div>
     </article>

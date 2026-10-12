@@ -40,6 +40,13 @@ export function cartReducer(state, action) {
     case 'REMOVE_ITEM':
       return { ...state, items: state.items.filter((item) => item.id !== action.id) };
 
+    case 'RESTORE_ITEM': {
+      if (state.items.some((item) => item.id === action.item.id)) return state;
+      const items = [...state.items];
+      items.splice(action.index, 0, action.item);
+      return { ...state, items };
+    };
+
     case 'REMOVE_CHECKED':
       return { ...state, items: state.items.filter((item) => !item.checked) };
 

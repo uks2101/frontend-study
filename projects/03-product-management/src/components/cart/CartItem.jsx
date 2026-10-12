@@ -2,11 +2,20 @@ import { Link } from 'react-router';
 import { formatPrice, getSalePrice } from '../../utils/format';
 import { useCartActions } from '../../store/cart/cartContext';
 import QuantitySelector from '../product-detail/QuantitySelector';
+import { useToast } from '../../store/toast/toastContext';
 
-export default function CartItem({ item }) {
+export default function CartItem({ item, index }) {
   const { id, title, brand, thumbnail, price, discountPercentage, stock, quantity, checked } = item;
-  const { toggleItem, updateQuantity, removeItem } = useCartActions();
+  const { toggleItem, updateQuantity, removeItem, restoreItem } = useCartActions();
+  const toast = useToast();
   const salePrice = getSalePrice(price, discountPercentage);
+
+  function handleRemove() {
+    removeItem(id);
+    toast.info(`${title}을(를) 삭제했습니다.`, {
+      action: { label: '실행 취소', onClick: () => restoreItem(item, index) },
+    });
+  }
 
   return (
     <li className="cart-item">
@@ -35,7 +44,7 @@ export default function CartItem({ item }) {
 
       <p className="cart-item__total">{formatPrice(salePrice * quantity)}</p>
 
-      <button type='button' className="cart-item__remove" aria-label={`${title} 삭제`} onClick={() => removeItem(id)}>×</button>
+      <button type='button' className="cart-item__remove" aria-label={`${title} 삭제`} onClick={handleRemove}>×</button>
     </li>
   )
 }

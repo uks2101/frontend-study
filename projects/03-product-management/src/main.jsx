@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import { router } from './router'
 import CartProvider from './store/cart/CartProvider'
+import ToastProvider from './store/toast/ToastProvider'
 import './index.css'
 
 async function enableMocking() {
@@ -15,9 +16,11 @@ async function enableMocking() {
 enableMocking().then(() => {
   createRoot(document.getElementById('root')).render(
     <StrictMode>
-      <CartProvider>
-        <RouterProvider router={router} />
-      </CartProvider>
+      <ToastProvider>
+        <CartProvider>
+          <RouterProvider router={router} />
+        </CartProvider>
+      </ToastProvider>
     </StrictMode>
   )
 });
