@@ -8,7 +8,19 @@ const SORTERS = {
   'price-asc': (a, b) => getSalePrice(a.price, a.discountPercentage) - getSalePrice(b.price, b.discountPercentage),
   'price-desc': (a, b) => getSalePrice(b.price, b.discountPercentage) - getSalePrice(a.price, a.discountPercentage),
   rating: (a, b) => b.rating - a.rating,
+  'created-desc': (a, b) => b.createdAt.localeCompare(a.createdAt),
+  'created-asc': (a, b) => a.createdAt.localeCompare(b.createdAt),
+  'title-asc': (a, b) => a.title.localeCompare(b.title),
+  'title-desc': (a, b) => b.title.localeCompare(a.title),
+  'stock-asc': (a, b) => a.stock - b.stock,
+  'stock-desc': (a, b) => b.stock - a.stock,
 };
+
+function mutationError() {
+  return getScenario() === 'mutation-error'
+    ? HttpResponse.json({ message: '저장에 실패했습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 })
+    : null;
+}
 
 export const handlers = [
   http.get('/api/products', async ({ request }) => {
@@ -73,6 +85,30 @@ export const handlers = [
     const related = db.products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
     return HttpResponse.json(related);
+  }),
+
+  http.delete('/api/products/:id', async ({ params }) => {
+    await delay(500);
+    const failed = mutationError();
+    if (failed) return failed;
+
+    const id = Number(params.id);
+    if (!db.products.some((p) => p.id === id)) {
+      return HttpResponse.json({ message: '이미 삭제된 상품입니다.' }, { status: 404 });
+    }
+
+    db.products = db.products.filter((p) => p.id !== id);
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post('/api/products/bulk-delete', async ({ request }) => {
+    await delay(700);
+    const failed = mutationError();
+    if (failed) return failed;
+
+    const { ids } = await request.json();
+    db.products = db.products.filter((p) => !ids.includes(p.id));
+    return HttpResponse.json({ deleted: ids.length });
   }),
 
   http.get('/api/categories', async () => {

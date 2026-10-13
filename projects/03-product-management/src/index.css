@@ -222,3 +222,66 @@ a.btn {color: #111; text-decoration: none;}
   .toast-container {right: 16px; bottom: 16px; left: 16px;}
   .toast {width: 100%; max-width: none;}
 }
+
+/* 링크 버튼이 a.btn 색에 덮이지 않게 */
+a.btn--primary {color: #fff;}
+
+/* 위험 버튼 */
+.btn--danger {border-color: #e53935; background: #e53935; color: #fff;}
+.btn--danger:hover {border-color: #c62828; background: #c62828;}
+.btn--danger-outline {border-color: #e53935; color: #e53935;}
+.btn--danger-outline:hover {background: #e53935; color: #fff;}
+.btn--danger:disabled,
+.btn--danger-outline:disabled {border-color: #ccc; background: #eee; color: #999;}
+
+/* 관리자 레이아웃 */
+.admin-page__header {display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;}
+.admin-page__header .page-title {margin: 0;}
+.admin-toolbar {display: flex; align-items: center; gap: 12px; margin-bottom: 16px;}
+.admin-toolbar__count {margin: 0 0 0 auto; font-size: 14px; color: #666;}
+.admin-loading {padding: 80px 0; color: #888; text-align: center;}
+
+/* 테이블 */
+.table-wrap {overflow-x: auto; border: 1px solid #eee; border-radius: 8px;}
+.admin-table {width: 100%; border-collapse: collapse; font-size: 14px; white-space: nowrap;}
+.admin-table th,
+.admin-table td {padding: 10px 12px; border-bottom: 1px solid #eee; text-align: left; vertical-align: middle;}
+.admin-table th {background: #fafafa; font-weight: 600; color: #555;}
+.admin-table tbody tr:hover {background: #fafafa;}
+.admin-table tbody tr.is-selected {background: #f0f6ff;}
+.admin-table p {margin: 0;}
+.admin-table__check {width: 40px;}
+.admin-table__thumb {display: block; width: 48px; height: 48px; object-fit: cover; border-radius: 6px; background: #f5f5f5;}
+.admin-table__title {max-width: 240px; overflow: hidden; font-weight: 500; text-overflow: ellipsis;}
+.admin-table__sub {font-size: 12px; color: #999;}
+.admin-table__category {text-transform: capitalize;}
+.admin-table__actions {display: flex; gap: 6px;}
+
+/* 정렬 버튼 */
+.sort-button {display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer;}
+.sort-button__icon {font-size: 10px; color: #bbb;}
+th[aria-sort] .sort-button__icon {color: #111;}
+
+/* 재고 배지 */
+.stock-badge {display: inline-block; min-width: 32px; padding: 2px 8px; border-radius: 10px; background: #eef7ee; color: #2e7d32; font-weight: 600; text-align: center;}
+.stock-badge--low {background: #fdecea; color: #e53935;}
+
+/* 페이지네이션 */
+.pagination {display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 24px;}
+.pagination__button {min-width: 36px; height: 36px; padding: 0 8px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer;}
+.pagination__button:hover:not(:disabled) {border-color: #111;}
+.pagination__button[aria-current="page"] {border-color: #111; background: #111; color: #fff;}
+.pagination__button:disabled {color: #ccc; cursor: not-allowed;}
+.pagination__ellipsis {padding: 0 4px; color: #aaa;}
+
+/* 확인 다이얼로그 */
+.dialog {width: min(400px, calc(100vw - 32px)); padding: 24px; border: 0; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);}
+.dialog::backdrop {background: rgba(0, 0, 0, 0.4);}
+.dialog__title {margin: 0 0 8px; font-size: 18px;}
+.dialog__desc {margin: 0 0 24px; line-height: 1.5; color: #555;}
+.dialog__actions {display: flex; justify-content: flex-end; gap: 8px;}
+
+@media (max-width: 768px) {
+  .admin-toolbar {flex-wrap: wrap;}
+  .admin-toolbar .search-bar {flex-basis: 100%; max-width: none;}
+}

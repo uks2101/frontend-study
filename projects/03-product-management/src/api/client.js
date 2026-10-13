@@ -6,19 +6,25 @@ export class ApiError extends Error {
   }
 }
 
-export async function request(url, options) {
+export async function request(url, { body, headers, ...options } = {}) {
+  const init = body === undefined
+    ? { ...options, headers }
+    : { ...options, body: JSON.stringify(body), headers: { 'Content-Type': 'application/json', ...headers } };
+
   let res;
   try {
-    res = await fetch(url, options);
+    res = await fetch(url, init);
   } catch (err) {
     if (err.name === 'AbortError') throw err;
     throw new ApiError('네트워크 연결을 확인해주세요.', 0);
   }
 
   if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new ApiError(body?.message ?? '요청에 실패했습니다.', res.status);
+    const data = await res.json().catch(() => null);
+    throw new ApiError(data?.message ?? '요청에 실패했습니다.', res.status);
   }
+
+  if (res.status === 204) return null;
 
   return res.json();
 }

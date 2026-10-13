@@ -1,5 +1,5 @@
 import { useState, useEffect, useEffectEvent } from 'react';
-import { getCache, setCache, deleteCache } from '../utils/queryCache';
+import { getCache, setCache, deleteCache, subscribe } from '../utils/queryCache';
 
 export function useQuery({ queryKey, queryFn, staleTime = 60 * 1000, keepPreviousData = false }) {
   const key = JSON.stringify(queryKey);
@@ -26,6 +26,12 @@ export function useQuery({ queryKey, queryFn, staleTime = 60 * 1000, keepPreviou
 
     return () => controller.abort();
   }, [key, staleTime, reloadCount]);
+
+  useEffect(() => {
+    return subscribe(() => {
+      if (!getCache(key)) setReloadCount((count) => count + 1);
+    });
+  }, [key]);
 
   function refetch() {
     deleteCache(key);
