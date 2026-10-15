@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { ADMIN_PAGE_SIZE, useAdminProductParams, useAdminProducts, useDeleteProducts } from '../../hooks/useAdminProducts';
 import { useToast } from '../../store/toast/toastContext';
 import SearchBar from '../../components/filter/SearchBar';
@@ -14,6 +14,8 @@ export default function AdminProductsPage() {
   const { status, data, error, isPlaceholderData, refetch } = useAdminProducts(params);
   const deleteMutation = useDeleteProducts();
   const toast = useToast();
+  const location = useLocation();
+  const returnTo = location.pathname + location.search;
 
   const listKey = JSON.stringify(params);
   const [selection, setSelection] = useState({ key: listKey, ids: [] });
@@ -81,6 +83,7 @@ export default function AdminProductsPage() {
           onToggle={toggleOne}
           onToggleAll={toggleAll}
           onDelete={setDeleteTarget}
+          returnTo={returnTo}
         />
         <Pagination page={params.page} totalPages={data.totalPages} onChange={setPage} />
       </div>
@@ -93,7 +96,7 @@ export default function AdminProductsPage() {
 
       <div className="admin-page__header">
         <h1 className="page-title">상품 관리</h1>
-        <Link to="/admin/products/new" className="btn btn--primary">+ 상품 등록</Link>
+        <Link to="/admin/products/new" state={{ returnTo }} className="btn btn--primary">+ 상품 등록</Link>
       </div>
 
       <div className="admin-toolbar">

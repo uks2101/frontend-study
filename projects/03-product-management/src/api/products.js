@@ -29,3 +29,11 @@ export function deleteProduct(id) {
 export function deleteProducts(ids) {
   return request('/api/products/bulk-delete', { method: 'POST', body: { ids } });
 }
+
+export function createProduct(data) {
+  return request('/api/products', { method: 'POST', body: data });
+}
+
+export function updateProduct(id, data) {
+  return request(`/api/products/${id}`, { method: 'PATCH', body: data });
+}

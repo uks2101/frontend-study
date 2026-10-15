@@ -23,7 +23,7 @@ function SortableHeader({ field, label, sort, onSort }) {
   )
 }
 
-export default function ProductTable({ products, sort, onSort, selectedIds, onToggle, onToggleAll, onDelete }) {
+export default function ProductTable({ products, sort, onSort, selectedIds, onToggle, onToggleAll, onDelete, returnTo }) {
   const selectedCount = products.filter((p) => selectedIds.includes(p.id)).length;
   const allSelected = products.length > 0 && selectedCount === products.length;
   const someSelected = selectedCount > 0 && !allSelected;
@@ -82,7 +82,7 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
                 <td>{new Date(createdAt).toLocaleDateString('ko-KR')}</td>
                 <td>
                   <div className="admin-table__actions">
-                    <Link to={`/admin/products/${id}/edit`} className="btn btn--sm">수정</Link>
+                    <Link to={`/admin/products/${id}/edit`} state={{ returnTo }} className="btn btn--sm">수정</Link>
                     <button type='button' className="btn btn--sm btn--danger-outline" onClick={() => onDelete([id])}>삭제</button>
                   </div>
                 </td>

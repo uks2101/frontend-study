@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router';
 import { useQuery } from './useQuery';
 import { useMutation } from './useMutation';
-import { getProducts, deleteProduct, deleteProducts } from '../api/products';
+import { getProducts, deleteProduct, deleteProducts, createProduct, updateProduct } from '../api/products';
 import { invalidateQueries } from '../utils/queryCache';
 
 export const ADMIN_PAGE_SIZE = 10;
@@ -50,12 +50,28 @@ export function useAdminProducts({ page, q, sort }) {
   });
 }
 
+function invalidateProductQueries() {
+  invalidateQueries(['products']);
+  invalidateQueries(['product']);
+}
+
 export function useDeleteProducts() {
   return useMutation({
     mutationFn: (ids) => (ids.length === 1 ? deleteProduct(ids[0]) : deleteProducts(ids)),
-    onSuccess: () => {
-      invalidateQueries(['products']);
-      invalidateQueries(['product']);
-    }
+    onSuccess: invalidateProductQueries,
+  });
+}
+
+export function useCreateProduct() {
+  return useMutation({
+    mutationFn: (data) => createProduct(data),
+    onSuccess: invalidateProductQueries
+  });
+}
+
+export function useUpdateProduct() {
+  return useMutation({
+    mutationFn: ({ id, data }) => updateProduct(id, data),
+    onSuccess: invalidateProductQueries,
   });
 }

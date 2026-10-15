@@ -16,6 +16,16 @@ const SORTERS = {
   'stock-desc': (a, b) => b.stock - a.stock,
 };
 
+function validateProduct(body) {
+  if (!body.title?.trim() || !body.brand?.trim() || !body.category || !body.thumbnail) {
+    return '필수 항목이 비어 있습니다.';
+  }
+  if (!(body.price > 0) || !(body.stock >= 0)) {
+    return '가격과 재고를 확인해주세요.';
+  }
+  return null;
+}
+
 function mutationError() {
   return getScenario() === 'mutation-error'
     ? HttpResponse.json({ message: '저장에 실패했습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 })
@@ -85,6 +95,45 @@ export const handlers = [
     const related = db.products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
     return HttpResponse.json(related);
+  }),
+
+  http.post('/api/products', async ({ request }) => {
+    await delay(700);
+    const failed = mutationError();
+    if (failed) return failed;
+
+    const body = await request.json();
+    const invalid = validateProduct(body);
+    if (invalid) return HttpResponse.json({ message: invalid }, { status: 400 });
+
+    const product = {
+      ...body,
+      id: Math.max(0, ...db.products.map((p) => p.id)) + 1,
+      images: body.images ?? [body.thumbnail],
+      rating: 0,
+      createdAt: new Date().toISOString()
+    };
+    db.products = [product, ...db.products];
+    return HttpResponse.json(product, { status: 201 });
+  }),
+
+  http.patch('/api/products/:id', async ({ params, request }) => {
+    await delay(500);
+    const failed = mutationError();
+    if (failed) return failed;
+
+    const id = Number(params.id);
+    const target = db.products.find((p) => p.id === id);
+    if (!target) {
+      return HttpResponse.json({ message: '상품을 찾을 수 없습니다.' }, { status: 404 });
+    }
+
+    const updated = { ...target, ...(await request.json()), id };
+    const invalid = validateProduct(updated);
+    if (invalid) return HttpResponse.json({ message: invalid }, { status: 400 });
+
+    db.products = db.products.map((p) => (p.id === id ? updated : p));
+    return HttpResponse.json(updated);
   }),
 
   http.delete('/api/products/:id', async ({ params }) => {
