@@ -1,6 +1,15 @@
 const cache = new Map();
 const listeners = new Set();
 
+function matches(key, queryKey) {
+  const exact = JSON.stringify(queryKey);
+  return key === exact || key.startsWith(exact.slice(0, -1) + ',');
+}
+
+function notify() {
+  listeners.forEach((listener) => listener());
+}
+
 export function getCache(key) {
   return cache.get(key);
 }
@@ -19,14 +28,31 @@ export function subscribe(listener) {
 }
 
 export function invalidateQueries(queryKey) {
-  const exact = JSON.stringify(queryKey);
-  const prefix = exact.slice(0, -1) + ',';
-
   for (const key of cache.keys()) {
-    if (key === exact || key.startsWith(prefix)) {
-      cache.delete(key);
+    if (matches(key, queryKey)) cache.delete(key);
+  }
+  notify();
+}
+
+export function getQueriesData(queryKey) {
+  return [...cache.entries()]
+    .filter(([key]) => matches(key, queryKey))
+    .map(([key, entry]) => [key, entry.data]);
+}
+
+export function setQueriesData(queryKey, updater) {
+  for (const [key, entry] of cache.entries()) {
+    if (matches(key, queryKey)) {
+      cache.set(key, { ...entry, data: updater(entry.data) });
     }
   }
+  notify();
+}
 
-  listeners.forEach((listener) => listener());
+export function restoreQueriesData(snapshot) {
+  snapshot.forEach(([key, data]) => {
+    const entry = cache.get(key);
+    if (entry) cache.set(key, { ...entry, data });
+  });
+  notify();
 }

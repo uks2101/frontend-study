@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { ADMIN_PAGE_SIZE, useAdminProductParams, useAdminProducts, useDeleteProducts } from '../../hooks/useAdminProducts';
+import { ADMIN_PAGE_SIZE, useAdminProductParams, useAdminProducts, useDeleteProducts, useUpdateStock } from '../../hooks/useAdminProducts';
 import { useToast } from '../../store/toast/toastContext';
 import SearchBar from '../../components/filter/SearchBar';
 import ProductTable from '../../components/admin/ProductTable';
@@ -13,6 +13,7 @@ export default function AdminProductsPage() {
   const { params, setPage, setSearch, setSort } = useAdminProductParams();
   const { status, data, error, isPlaceholderData, refetch } = useAdminProducts(params);
   const deleteMutation = useDeleteProducts();
+  const stockMutation = useUpdateStock();
   const toast = useToast();
   const location = useLocation();
   const returnTo = location.pathname + location.search;
@@ -33,23 +34,29 @@ export default function AdminProductsPage() {
 
   function handleConfirmDelete() {
     const ids = deleteTarget;
+    const nextTotalPages = Math.ceil((data.total - ids.length) / ADMIN_PAGE_SIZE);
+
+    setDeleteTarget(null);
+    setSelection({ key: listKey, ids: [] });
+    if (params.page > nextTotalPages && nextTotalPages > 0) {
+      setPage(nextTotalPages);
+    }
 
     deleteMutation.mutate(ids, {
       onSuccess: () => {
         toast.success(`${ids.length}개 상품을 삭제했습니다.`);
-        setSelection({ key: listKey, ids: [] });
-        setDeleteTarget(null);
-
-        const nextTotalPages = Math.ceil((data.total - ids.length) / ADMIN_PAGE_SIZE);
-        if (params.page > nextTotalPages && nextTotalPages > 0) {
-          setPage(nextTotalPages);
-        }
       },
       onError: (err) => {
-        toast.error(err.message);
-        setDeleteTarget(null);
+        toast.error(`삭제하지 못했습니다. ${err.message}`);
       }
     });
+  }
+
+  function handleStockSave(product, stock) {
+    stockMutation.mutate(
+      { id: product.id, stock, previousStock: product.stock },
+      { onError: (err) => toast.error(`'${product.title}' 재고를 저장하지 못했습니다. ${err.message}`) },
+    );
   }
 
   function renderContent() {
@@ -83,6 +90,8 @@ export default function AdminProductsPage() {
           onToggle={toggleOne}
           onToggleAll={toggleAll}
           onDelete={setDeleteTarget}
+          onStockSave={handleStockSave}
+          onStockInvalid={(message) => toast.error(message)}
           returnTo={returnTo}
         />
         <Pagination page={params.page} totalPages={data.totalPages} onChange={setPage} />
@@ -119,8 +128,6 @@ export default function AdminProductsPage() {
         title="상품을 삭제할까요?"
         description={`선택한 ${deleteTarget?.length ?? 0}개 상품이 삭제됩니다. 삭제한 상품은 되돌릴 수 없습니다.`}
         confirmLabel="삭제"
-        pendingLabel="삭제 중..."
-        isPending={deleteMutation.isPending}
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteTarget(null)}
       />

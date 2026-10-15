@@ -2,7 +2,7 @@ import { useSearchParams } from 'react-router';
 import { useQuery } from './useQuery';
 import { useMutation } from './useMutation';
 import { getProducts, deleteProduct, deleteProducts, createProduct, updateProduct } from '../api/products';
-import { invalidateQueries } from '../utils/queryCache';
+import { invalidateQueries, getQueriesData, setQueriesData, restoreQueriesData } from '../utils/queryCache';
 
 export const ADMIN_PAGE_SIZE = 10;
 export const ADMIN_DEFAULT_SORT = 'created-desc';
@@ -55,10 +55,21 @@ function invalidateProductQueries() {
   invalidateQueries(['product']);
 }
 
+const ADMIN_LIST_KEY = ['products', 'admin'];
+
 export function useDeleteProducts() {
   return useMutation({
     mutationFn: (ids) => (ids.length === 1 ? deleteProduct(ids[0]) : deleteProducts(ids)),
-    onSuccess: invalidateProductQueries,
+    onMutate: (ids) => {
+      const snapshot = getQueriesData(ADMIN_LIST_KEY);
+      setQueriesData(ADMIN_LIST_KEY, (data) => {
+        const products = data.products.filter((p) => !ids.includes(p.id));
+        return { ...data, products, total: data.total - (data.products.length - products.length) };
+      });
+      return { snapshot };
+    },
+    onError: (_error, _ids, context) => restoreQueriesData(context.snapshot),
+    onSettled: invalidateProductQueries
   });
 }
 
@@ -73,5 +84,25 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: ({ id, data }) => updateProduct(id, data),
     onSuccess: invalidateProductQueries,
+  });
+}
+
+function setStockInCache(id, nextStock, expectedStock) {
+  setQueriesData(ADMIN_LIST_KEY, (data) => ({
+    ...data,
+    products: data.products.map((p) =>
+      p.id === id && (expectedStock === undefined || p.stock === expectedStock) ? { ...p, stock: nextStock } : p)
+  }));
+}
+
+export function useUpdateStock() {
+  return useMutation({
+    mutationFn: ({ id, stock }) => updateProduct(id, { stock }),
+    onMutate: ({ id, stock, previousStock }) => {
+      setStockInCache(id, stock);
+      return { previousStock };
+    },
+    onError: (_error, { id, stock }, context) => setStockInCache(id, context.previousStock, stock),
+    onSettled: invalidateProductQueries
   });
 }

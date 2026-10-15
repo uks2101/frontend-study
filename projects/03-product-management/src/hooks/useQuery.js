@@ -29,7 +29,14 @@ export function useQuery({ queryKey, queryFn, staleTime = 60 * 1000, keepPreviou
 
   useEffect(() => {
     return subscribe(() => {
-      if (!getCache(key)) setReloadCount((count) => count + 1);
+      const cached = getCache(key);
+
+      if (!cached) {
+        setReloadCount((count) => count + 1);
+        return;
+      }
+
+      setResult((prev) => (prev.key === key && prev.data !== cached.data ? { key, data: cached.data, error: null } : prev))
     });
   }, [key]);
 

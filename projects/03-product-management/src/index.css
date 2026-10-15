@@ -316,3 +316,8 @@ label.btn {display: inline-block;}
   .product-form__grid {grid-template-columns: 1fr;}
   .image-upload {flex-direction: column;}
 }
+
+/* 클릭해서 수정하는 재고 */
+button.stock-badge {border: 0; font: inherit; font-weight: 600; cursor: pointer;}
+button.stock-badge:hover {outline: 2px solid currentColor; outline-offset: 1px;}
+.stock-input {box-sizing: border-box; width: 72px; padding: 4px 6px; border: 1px solid #111; border-radius: 6px; font: inherit;}

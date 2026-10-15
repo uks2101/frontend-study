@@ -1,7 +1,6 @@
 import { Link } from 'react-router';
 import { formatPrice } from '../../utils/format';
-
-const LOW_STOCK = 10;
+import StockCell from './StockCell';
 
 function SortableHeader({ field, label, sort, onSort }) {
   const [sortField, sortDir] = sort.split('-');
@@ -23,7 +22,7 @@ function SortableHeader({ field, label, sort, onSort }) {
   )
 }
 
-export default function ProductTable({ products, sort, onSort, selectedIds, onToggle, onToggleAll, onDelete, returnTo }) {
+export default function ProductTable({ products, sort, onSort, selectedIds, onToggle, onToggleAll, onDelete, onStockSave, onStockInvalid, returnTo }) {
   const selectedCount = products.filter((p) => selectedIds.includes(p.id)).length;
   const allSelected = products.length > 0 && selectedCount === products.length;
   const someSelected = selectedCount > 0 && !allSelected;
@@ -56,7 +55,7 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
         </thead>
         <tbody>
           {products.map((product) => {
-            const { id, title, brand, category, thumbnail, price, discountPercentage, stock, createdAt } = product;
+            const { id, title, brand, category, thumbnail, price, discountPercentage, createdAt } = product;
             const isSelected = selectedIds.includes(id);
 
             return (
@@ -77,7 +76,7 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
                   <p className="admin-table__sub">{Math.round(discountPercentage)}% 할인</p>
                 </td>
                 <td>
-                  <span className={stock < LOW_STOCK ? 'stock-badge stock-badge--low' : 'stock-badge'}>{stock}</span>
+                  <StockCell product={product} onSave={onStockSave} onInvalid={onStockInvalid} />
                 </td>
                 <td>{new Date(createdAt).toLocaleDateString('ko-KR')}</td>
                 <td>
