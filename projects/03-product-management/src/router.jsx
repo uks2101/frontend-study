@@ -7,6 +7,7 @@ import CartPage from './pages/CartPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminProductFormPage from './pages/admin/AdminProductFormPage';
 import NotFoundPage from './pages/NotFoundPage';
+import WishlistPage from './pages/WishlistPage';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { index: true, element: <ProductListPage /> },
       { path: 'products/:id', element: <ProductDetailPage /> },
       { path: 'cart', element: <CartPage /> },
+      { path: 'wishlist', element: <WishlistPage /> },
     ],
   },
   {

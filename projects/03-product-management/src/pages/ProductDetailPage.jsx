@@ -5,6 +5,7 @@ import ProductDetailSkeleton from '../components/product-detail/ProductDetailSke
 import RelatedProducts from '../components/product-detail/RelatedProducts';
 import ErrorState from '../components/common/ErrorState';
 import EmptyState from '../components/common/EmptyState';
+import RecentlyViewed from '../components/product/RecentlyViewed';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -29,6 +30,7 @@ export default function ProductDetailPage() {
     <>
       <ProductDetail key={product.id} product={product} />
       <RelatedProducts productId={id} />
+      <RecentlyViewed excludeId={product.id} />
     </>
   )
 }

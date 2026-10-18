@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { formatPrice, getSalePrice } from '../../utils/format';
+import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ product }) {
   const { id, title, brand, description, thumbnail, price, discountPercentage, rating } = product;
@@ -25,6 +26,7 @@ export default function ProductCard({ product }) {
           </p>
         </div>
       </Link>
+      <WishlistButton product={product} className="product-card__wish" />
     </li>
   )
 }

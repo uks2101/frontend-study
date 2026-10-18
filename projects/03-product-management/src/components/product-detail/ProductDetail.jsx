@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useToast } from '../../store/toast/toastContext';
 import { formatPrice, getSalePrice } from '../../utils/format';
 import { useCart, useCartActions } from '../../store/cart/cartContext';
 import ImageGallery from './ImageGallery';
 import QuantitySelector from './QuantitySelector';
+import { addRecentlyViewed } from '../../store/recent/recentStore';
+import WishlistButton from '../product/WishlistButton';
 
 const LOW_STOCK = 10;
 
@@ -21,6 +23,10 @@ export default function ProductDetail({ product }) {
   const inCartQuantity = items.find((item) => item.id === id)?.quantity ?? 0;
   const available = stock - inCartQuantity;
   const canAdd = available > 0;
+
+  useEffect(() => {
+    addRecentlyViewed(product);
+  }, [product]);
 
   function handleAddToCart() {
     addItem(product, quantity);
@@ -47,7 +53,10 @@ export default function ProductDetail({ product }) {
 
         <div className="detail__info">
           <p className="detail__brand">{brand}</p>
-          <h1 className="detail__title">{title}</h1>
+          <div className="detail__title-row">
+            <h1 className="detail__title">{title}</h1>
+            <WishlistButton product={product} />
+          </div>
           <p className="detail__rating">
             <span aria-hidden="true">★</span> {rating.toFixed(1)}
           </p>

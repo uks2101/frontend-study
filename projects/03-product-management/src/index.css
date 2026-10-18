@@ -321,3 +321,26 @@ label.btn {display: inline-block;}
 button.stock-badge {border: 0; font: inherit; font-weight: 600; cursor: pointer;}
 button.stock-badge:hover {outline: 2px solid currentColor; outline-offset: 1px;}
 .stock-input {box-sizing: border-box; width: 72px; padding: 4px 6px; border: 1px solid #111; border-radius: 6px; font: inherit;}
+
+/* 찜 버튼 */
+.product-card {position: relative;}
+.wishlist-button {display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid #ddd; border-radius: 50%; background: #fff; color: #888; font-size: 18px; line-height: 1; cursor: pointer; transition: transform 0.15s;}
+.wishlist-button:hover {transform: scale(1.1);}
+.wishlist-button[aria-pressed="true"] {border-color: #e53935; color: #e53935;}
+.product-card__wish {position: absolute; top: 8px; right: 8px; border: 0; background: rgba(255, 255, 255, 0.9); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);}
+.product-list--list .product-card__wish {top: 4px; right: auto; left: 100px;}
+
+/* 상세 제목 줄 */
+.detail__title-row {display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;}
+
+/* 찜 페이지 개수 */
+.page-title__count {margin-left: 4px; color: #e53935;}
+
+/* 최근 본 상품 헤더 */
+.related__header {display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;}
+.related__header .related__title {margin: 0;}
+.related__clear {padding: 0; border: 0; background: none; color: #888; text-decoration: underline; cursor: pointer;}
+
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-button {transition: none;}
+}
