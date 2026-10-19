@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useProductFilters } from '../hooks/useProductFilters';
 import { useProducts } from '../hooks/useProducts';
 import { useLocalStorageState } from '../hooks/useLocalStorageState';
@@ -11,6 +12,7 @@ import ViewToggle from '../components/product/ViewToggle';
 import LoadMore from '../components/product/LoadMore';
 import ErrorState from '../components/common/ErrorState';
 import EmptyState from '../components/common/EmptyState';
+import Drawer from '../components/common/Drawer';
 
 export default function ProductListPage() {
   const { filters, setSearch, toggleCategory, setPriceRange, setSort, resetFilters } = useProductFilters();
@@ -26,9 +28,11 @@ export default function ProductListPage() {
     refetch
   } = useProducts(filters);
   const [view, setView] = useLocalStorageState('product-view', 'grid');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const products = data?.pages.flatMap((page) => page.products) ?? [];
   const total = data?.pages[0].total ?? 0;
+  const activeFilterCount = filters.categories.length + (filters.minPrice !== null || filters.maxPrice !== null ? 1 : 0);
 
   function renderContent() {
     if (status === 'pending') {
@@ -79,6 +83,19 @@ export default function ProductListPage() {
         <div className="product-page__content">
           <div className="product-toolbar">
             <SearchBar value={filters.q} onSearch={setSearch} />
+            <button
+              type='button'
+              className="btn filter-toggle"
+              onClick={() => setIsFilterOpen(true)}
+            >
+              필터
+              {activeFilterCount > 0 && (
+                <span className="badge">
+                  {activeFilterCount}
+                  <span className="sr-only">개 적용됨</span>
+                </span>
+              )}
+            </button>
             <p className="product-toolbar__count">
               {status === 'success' && `${products.length} / 총 ${total}개`}
             </p>
@@ -89,6 +106,28 @@ export default function ProductListPage() {
           {renderContent()}
         </div>
       </div>
+
+      <Drawer
+        open={isFilterOpen}
+        title="필터"
+        onClose={() => setIsFilterOpen(false)}
+        footer={
+          <>
+            <button type='button' className="btn" onClick={resetFilters}>초기화</button>
+            <button type='button' className="btn btn--primary" onClick={() => setIsFilterOpen(false)}>
+              {status === 'success' ? `${total}개 상품 보기` : '결과 보기'}
+            </button>
+          </>
+        }
+      >
+        <FilterPanel
+          filters={filters}
+          onToggleCategory={toggleCategory}
+          onApplyPrice={setPriceRange}
+          onReset={resetFilters}
+          showHeader={false}
+        />
+      </Drawer>
     </section>
   )
 }

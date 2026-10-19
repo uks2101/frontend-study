@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useBlocker } from 'react-router';
 import { useCategories } from '../../hooks/useCategories';
 import { FIELD_ORDER, validateProductForm } from '../../utils/productForm';
@@ -19,6 +19,17 @@ export default function ProductForm({ initialValues, submitLabel, isSubmitting, 
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) => isDirty && currentLocation.pathname !== nextLocation.pathname && !nextLocation.state?.saved,
   );
+
+  useEffect(() => {
+    if (!isDirty) return;
+
+    function handleBeforeUnload(e) {
+      e.preventDefault();
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
 
   function setField(name, value) {
     setValues((prev) => ({ ...prev, [name]: value }));
