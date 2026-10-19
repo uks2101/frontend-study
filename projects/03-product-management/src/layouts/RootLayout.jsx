@@ -1,14 +1,12 @@
 import { Link, NavLink, Outlet, ScrollRestoration, useMatch } from 'react-router';
-import { useCart } from '../store/cart/cartContext';
-import { getCartCount } from '../store/cart/cartSelectors';
+import { useCartStore } from '../store/cart/cartStore';
 import { useWishlistCount } from '../store/wishlist/wishlistStore';
 import SkipLink from '../components/common/SkipLink';
 import ThemeSelect from '../components/common/ThemeSelect';
 
 export default function RootLayout() {
   const isProductDetail = useMatch('/products/:id');
-  const { items } = useCart();
-  const cartCount = getCartCount(items);
+  const cartCount = useCartStore((state) => state.items.length);
   const wishlistCount = useWishlistCount();
 
   return (

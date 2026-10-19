@@ -59,9 +59,6 @@ export function cartReducer(state, action) {
     case 'TOGGLE_ALL':
       return { ...state, items: state.items.map((item) => ({ ...item, checked: action.checked })) };
 
-    case 'REPLACE':
-      return action.state;
-
     default:
       throw new Error(`알 수 없는 장바구니 액션: ${action.type}`);
   }

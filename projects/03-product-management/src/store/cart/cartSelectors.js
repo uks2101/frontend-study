@@ -3,10 +3,6 @@ import { getSalePrice } from '../../utils/format';
 export const FREE_SHIPPING_THRESHOLD = 100;
 const SHIPPING_FEE = 5;
 
-export function getCartCount(items) {
-  return items.length;
-}
-
 export function getCartSummary(items) {
   const checkedItems = items.filter((item) => item.checked);
 

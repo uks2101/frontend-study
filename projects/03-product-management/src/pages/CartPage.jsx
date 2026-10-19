@@ -1,15 +1,14 @@
 import { Link } from 'react-router';
-import { useCart, useCartActions } from '../store/cart/cartContext';
+import { useCartStore } from '../store/cart/cartStore';
 import { getCartSummary } from '../store/cart/cartSelectors';
 import CartItem from '../components/cart/CartItem';
 import CartSummary from '../components/cart/CartSummary';
 import EmptyState from '../components/common/EmptyState';
-import { useToast } from '../store/toast/toastContext';
+import { toast } from '../store/toast/toastStore';
 
 export default function CartPage() {
-  const { items } = useCart();
-  const { toggleAll, removeChecked } = useCartActions();
-  const toast = useToast();
+  const items = useCartStore((state) => state.items);
+  const { toggleAll, removeChecked } = useCartStore.getState();
 
   if (items.length === 0) {
     return (

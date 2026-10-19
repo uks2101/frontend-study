@@ -1,11 +1,16 @@
-import { createStore, persistStore, useStore } from '../createStore';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { toProductSnapshot } from '../../utils/productSnapshot';
+import { syncTabs } from '../syncTabs';
 
-const wishlistStore = createStore({ items: [] });
-persistStore(wishlistStore, 'wishlist', (saved) => Array.isArray(saved?.items));
+const useWishlistStore = create(
+  persist(() => ({ items: [] }), { name: 'wishlist-storage' }),
+);
+
+syncTabs(useWishlistStore);
 
 export function toggleWishlist(product) {
-  wishlistStore.setState((state) => {
+  useWishlistStore.setState((state) => {
     const exists = state.items.some((item) => item.id === product.id);
     return {
       items: exists
@@ -16,13 +21,13 @@ export function toggleWishlist(product) {
 }
 
 export function useWishlistItems() {
-  return useStore(wishlistStore, (state) => state.items);
+  return useWishlistStore((state) => state.items);
 }
 
 export function useWishlistCount() {
-  return useStore(wishlistStore, (state) => state.items.length);
+  return useWishlistStore((state) => state.items.length);
 }
 
 export function useIsWishlisted(id) {
-  return useStore(wishlistStore, (state) => state.items.some((item) => item.id === id));
+  return useWishlistStore((state) => state.items.some((item) => item.id === id));
 }

@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { useProduct } from '../../hooks/useProducts';
 import { useCreateProduct, useUpdateProduct } from '../../hooks/useAdminProducts';
-import { useToast } from '../../store/toast/toastContext';
+import { toast } from '../../store/toast/toastStore';
 import { EMPTY_PRODUCT_FORM, toFormValues, toProductPayload } from '../../utils/productForm';
 import ProductForm from '../../components/admin/ProductForm';
 import ErrorState from '../../components/common/ErrorState';
@@ -14,7 +14,6 @@ function useReturnTo() {
 
 function CreateProduct() {
   const createMutation = useCreateProduct();
-  const toast = useToast();
   const navigate = useNavigate();
   const returnTo = useReturnTo();
 
@@ -42,7 +41,6 @@ function CreateProduct() {
 function EditProduct({ id }) {
   const { status, data: product, error, refetch } = useProduct(id);
   const updateMutation = useUpdateProduct();
-  const toast = useToast();
   const navigate = useNavigate();
   const returnTo = useReturnTo();
 

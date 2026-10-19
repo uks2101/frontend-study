@@ -1,24 +1,28 @@
-import { createStore, persistStore, useStore } from '../createStore';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { toProductSnapshot } from '../../utils/productSnapshot';
+import { syncTabs } from '../syncTabs';
 
 const MAX_RECENT = 10;
 
-const recentStore = createStore({ items: [] });
-persistStore(recentStore, 'recently-viewed', (saved) => Array.isArray(saved?.items));
+const useRecentStore = create(
+  persist(() => ({ items: [] }), { name: 'recent-storage' }),
+);
+
+syncTabs(useRecentStore);
 
 export function addRecentlyViewed(product) {
-  recentStore.setState((state) => {
+  useRecentStore.setState((state) => {
     if (state.items[0]?.id === product.id) return state;
-
     const others = state.items.filter((item) => item.id !== product.id);
     return { items: [toProductSnapshot(product), ...others].slice(0, MAX_RECENT) };
   });
 }
 
 export function clearRecentlyViewed() {
-  recentStore.setState({ items: [] });
+  useRecentStore.setState({ items: [] });
 }
 
 export function useRecentlyViewed() {
-  return useStore(recentStore, (state) => state.items);
+  return useRecentStore((state) => state.items);
 }

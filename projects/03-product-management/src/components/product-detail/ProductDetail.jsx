@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useToast } from '../../store/toast/toastContext';
+import { toast } from '../../store/toast/toastStore';
 import { formatPrice, getSalePrice } from '../../utils/format';
-import { useCart, useCartActions } from '../../store/cart/cartContext';
+import { useCartStore } from '../../store/cart/cartStore';
 import ImageGallery from './ImageGallery';
 import QuantitySelector from './QuantitySelector';
 import { addRecentlyViewed } from '../../store/recent/recentStore';
@@ -12,15 +12,13 @@ const LOW_STOCK = 10;
 
 export default function ProductDetail({ product }) {
   const { id, title, brand, category, description, images, price, discountPercentage, rating, stock } = product;
-  const { items } = useCart();
-  const { addItem } = useCartActions();
-  const toast = useToast();
+  const inCartQuantity = useCartStore((state) => state.items.find((item) => item.id === id)?.quantity ?? 0);
+  const addItem = useCartStore((state) => state.addItem);
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
   const salePrice = getSalePrice(price, discountPercentage);
   const isSoldOut = stock === 0;
-  const inCartQuantity = items.find((item) => item.id === id)?.quantity ?? 0;
   const available = stock - inCartQuantity;
   const canAdd = available > 0;
 

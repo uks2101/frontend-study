@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { ADMIN_PAGE_SIZE, useAdminProductParams, useAdminProducts, useDeleteProducts, useUpdateStock } from '../../hooks/useAdminProducts';
-import { useToast } from '../../store/toast/toastContext';
+import { toast } from '../../store/toast/toastStore';
 import SearchBar from '../../components/filter/SearchBar';
 import ProductTable from '../../components/admin/ProductTable';
 import Pagination from '../../components/common/Pagination';
@@ -14,7 +14,6 @@ export default function AdminProductsPage() {
   const { status, data, error, isPlaceholderData, refetch } = useAdminProducts(params);
   const deleteMutation = useDeleteProducts();
   const stockMutation = useUpdateStock();
-  const toast = useToast();
   const location = useLocation();
   const returnTo = location.pathname + location.search;
 
@@ -123,7 +122,7 @@ export default function AdminProductsPage() {
 
       {renderContent()}
 
-      <ConfirmDialog
+    <ConfirmDialog
         open={deleteTarget !== null}
         title="상품을 삭제할까요?"
         description={`선택한 ${deleteTarget?.length ?? 0}개 상품이 삭제됩니다. 삭제한 상품은 되돌릴 수 없습니다.`}

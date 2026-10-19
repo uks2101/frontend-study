@@ -1,13 +1,12 @@
 import { Link } from 'react-router';
 import { formatPrice, getSalePrice } from '../../utils/format';
-import { useCartActions } from '../../store/cart/cartContext';
 import QuantitySelector from '../product-detail/QuantitySelector';
-import { useToast } from '../../store/toast/toastContext';
+import { useCartStore } from '../../store/cart/cartStore';
+import { toast } from '../../store/toast/toastStore';
 
 export default function CartItem({ item, index }) {
   const { id, title, brand, thumbnail, price, discountPercentage, stock, quantity, checked } = item;
-  const { toggleItem, updateQuantity, removeItem, restoreItem } = useCartActions();
-  const toast = useToast();
+  const { toggleItem, updateQuantity, removeItem, restoreItem } = useCartStore.getState();
   const salePrice = getSalePrice(price, discountPercentage);
 
   function handleRemove() {

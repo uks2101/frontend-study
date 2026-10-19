@@ -8,8 +8,8 @@
     <script>
       (function () {
         try {
-          var saved = JSON.parse(localStorage.getItem('theme'));
-          var theme = saved && saved.theme;
+          var saved = JSON.parse(localStorage.getItem('theme-storage'));
+          var theme = saved && saved.state && saved.state.theme;
           if (theme !== 'light' && theme !== 'dark') {
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
           }
