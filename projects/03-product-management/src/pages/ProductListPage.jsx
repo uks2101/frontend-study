@@ -23,7 +23,7 @@ export default function ProductListPage() {
     isPlaceholderData,
     hasNextPage,
     isFetchingNextPage,
-    fetchNextPageError,
+    isFetchNextPageError,
     fetchNextPage,
     refetch
   } = useProducts(filters);
@@ -39,7 +39,7 @@ export default function ProductListPage() {
       return <ProductListSkeleton view={view} />;
     }
 
-    if (status === 'error') {
+    if (status === 'error' && !data) {
       return <ErrorState message={error.message} onRetry={refetch} />;
     }
 
@@ -60,7 +60,7 @@ export default function ProductListPage() {
           <LoadMore
             hasNextPage={hasNextPage}
             isFetching={isFetchingNextPage}
-            error={fetchNextPageError}
+            error={isFetchNextPageError ? error : null}
             onLoadMore={fetchNextPage}
           />
         )}
