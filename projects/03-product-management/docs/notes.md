@@ -4,6 +4,25 @@
 
 ## Problems
 
+### 배포 후 아이폰에서만 무한 스크롤 추가 로드 실패
+
+- 증상: Vercel 배포 후 휴대폰(iOS Safari)에서 첫 20개는 보이는데, 스크롤하면 "The string did not match the expected pattern" 에러와 함께 다음 페이지가 안 불러와짐. 개발 환경과 데스크톱에서는 재현되지 않음.
+- 추적 과정
+  1. 에러 메시지: Safari가 **JSON이 아닌 문자열을 JSON으로 파싱할 때** 내는 메시지 (Chrome이라면 `Unexpected token '<'`). → 응답이 JSON이 아니었다는 뜻.
+  2. 배포 사이트에 `/api/products?page=2`를 직접 요청 → `200 text/html`로 **`index.html`이 옴**. SPA용 `vercel.json` rewrite가 API 경로까지 `index.html`로 보내고 있었음.
+  3. 즉 `/api` 요청이 MSW Service Worker에 **가로채지지 않고** 실제 네트워크로 나간 것. `mockServiceWorker.js`를 보니 연결된 페이지 목록(`activeClientIds`)이 비어 있으면 모든 요청을 그대로 통과시킴.
+  4. iOS Safari는 배터리 절약을 위해 Service Worker를 자주 강제 종료함. 다시 깨어난 Service Worker는 메모리의 페이지 목록이 비어 있어서 이후 요청을 전부 통과시킴 → 첫 페이지는 성공, **목록을 보는 사이 종료된 뒤의 추가 로드**만 실패.
+- 해결
+  - 배포 환경에서는 Service Worker를 쓰지 않고, MSW의 `getResponse(handlers, request)`로 **페이지 안에서 핸들러를 직접 실행**하는 `mockFetch`를 만들어 `api/client.js`에서 `import.meta.env.PROD`일 때 사용. 핸들러와 화면 코드는 그대로.
+  - `mockFetch`에서 `signal`의 `abort` 이벤트를 받아 `AbortError`로 끝내서, 요청 취소 구조(Step 3)가 배포에서도 똑같이 동작하게 함.
+  - 예전 배포에서 설치된 Service Worker는 앱 시작 시 해제. 일부 브라우저에서 `getRegistrations()`가 에러를 던지면 앱이 아예 안 그려지므로 `try/catch`로 감쌈.
+  - `api/client.js`에서 응답의 `Content-Type`이 JSON이 아니면 `ApiError('서버 응답 형식이 올바르지 않습니다.')`를 던짐 → 브라우저마다 다른 영어 파싱 에러가 사용자에게 그대로 노출되지 않음.
+  - `vercel.json` rewrite에서 `/api/` 경로 제외(`/((?!api/).*)`) → API 요청이 잘못 나가면 "200 + HTML" 대신 404가 와서 원인이 바로 드러남.
+- 교훈
+  - **"200인데 내용이 HTML"은 에러를 숨긴다.** 상태 코드만 믿지 말고 응답 형식도 검사해야 함.
+  - MSW는 개발용 도구라 Service Worker 생명주기에 의존함. 백엔드 없는 데모를 배포할 땐 Service Worker 없이 동작하는 방식이 더 안전함.
+  - 개발 환경과 데스크톱에서 잘 되더라도 **배포 결과물을 실제 모바일 기기**에서 확인해야 함.
+
 ### 에러 없이 조용히 실패하는 오타
 
 - Step 5 `cached.updateAt` (정답 `updatedAt`): 없는 속성이라 `undefined` → `Date.now() - undefined`는 `NaN` → `NaN < staleTime`은 항상 `false`. 캐시가 항상 "오래됨"으로 판단돼서, 뒤로 가기마다 불러온 페이지를 전부 다시 요청함. 화면은 캐시로 정상 표시돼서 Network 탭을 보기 전까지 몰랐음.
