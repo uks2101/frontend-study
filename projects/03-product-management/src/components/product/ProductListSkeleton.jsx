@@ -8,7 +8,7 @@ function ProductCardSkeleton() {
         <div className="skeleton skeleton--text" style={{ width: '60%' }} />
       </div>
     </li>
-  )
+  );
 }
 
 export default function ProductListSkeleton({ count = 8, view = 'grid' }) {
@@ -20,5 +20,5 @@ export default function ProductListSkeleton({ count = 8, view = 'grid' }) {
         ))}
       </ul>
     </div>
-  )
+  );
 }

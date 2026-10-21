@@ -16,16 +16,23 @@ export function cartReducer(state, action) {
       const exists = state.items.some((item) => item.id === product.id);
 
       if (!exists) {
-        return { ...state, items: [...state.items, toCartItem(product, clampQuantity(quantity, product.stock))] };
+        return {
+          ...state,
+          items: [...state.items, toCartItem(product, clampQuantity(quantity, product.stock))],
+        };
       }
 
       return {
         ...state,
         items: state.items.map((item) =>
           item.id === product.id
-            ? { ...item, stock: product.stock, quantity: clampQuantity(item.quantity + quantity, product.stock) }
-            : item
-        )
+            ? {
+                ...item,
+                stock: product.stock,
+                quantity: clampQuantity(item.quantity + quantity, product.stock),
+              }
+            : item,
+        ),
       };
     }
 
@@ -33,8 +40,10 @@ export function cartReducer(state, action) {
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id === action.id ? { ...item, quantity: clampQuantity(action.quantity, item.stock) } : item,
-        )
+          item.id === action.id
+            ? { ...item, quantity: clampQuantity(action.quantity, item.stock) }
+            : item,
+        ),
       };
 
     case 'REMOVE_ITEM':
@@ -45,7 +54,7 @@ export function cartReducer(state, action) {
       const items = [...state.items];
       items.splice(action.index, 0, action.item);
       return { ...state, items };
-    };
+    }
 
     case 'REMOVE_CHECKED':
       return { ...state, items: state.items.filter((item) => !item.checked) };
@@ -53,7 +62,9 @@ export function cartReducer(state, action) {
     case 'TOGGLE_ITEM':
       return {
         ...state,
-        items: state.items.map((item) => (item.id === action.id ? { ...item, checked: !item.checked } : item))
+        items: state.items.map((item) =>
+          item.id === action.id ? { ...item, checked: !item.checked } : item,
+        ),
       };
 
     case 'TOGGLE_ALL':

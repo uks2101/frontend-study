@@ -33,15 +33,21 @@ export default function ConfirmDialog({
       aria-describedby={descId}
       onCancel={handleCancel}
     >
-      <h2 id={titleId} className="dialog__title">{title}</h2>
-      <p id={descId} className="dialog__desc">{description}</p>
+      <h2 id={titleId} className="dialog__title">
+        {title}
+      </h2>
+      <p id={descId} className="dialog__desc">
+        {description}
+      </p>
 
       <div className="dialog__actions">
-        <button type='button' className="btn" disabled={isPending} onClick={onCancel}>취소</button>
-        <button type='button' className="btn btn--danger" disabled={isPending} onClick={onConfirm}>
+        <button type="button" className="btn" disabled={isPending} onClick={onCancel}>
+          취소
+        </button>
+        <button type="button" className="btn btn--danger" disabled={isPending} onClick={onConfirm}>
           {isPending ? pendingLabel : confirmLabel}
         </button>
       </div>
     </dialog>
-  )
+  );
 }

@@ -15,8 +15,8 @@ export function useProductFilters() {
 
   function toggleCategory(category) {
     const categories = filters.categories.includes(category)
-    ? filters.categories.filter((c) => c !== category)
-    : [...filters.categories, category];
+      ? filters.categories.filter((c) => c !== category)
+      : [...filters.categories, category];
     updateFilters({ categories });
   }
 

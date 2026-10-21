@@ -35,7 +35,7 @@ function CreateProduct() {
       onSubmit={handleSubmit}
       onCancel={() => navigate(returnTo)}
     />
-  )
+  );
 }
 
 function EditProduct({ id }) {
@@ -45,14 +45,20 @@ function EditProduct({ id }) {
   const returnTo = useReturnTo();
 
   if (status === 'pending') {
-    return <p className="admin-loading" role="status">상품 정보를 불러오는 중...</p>;
+    return (
+      <p className="admin-loading" role="status">
+        상품 정보를 불러오는 중...
+      </p>
+    );
   }
 
   if (status === 'error') {
     if (error.status === 404) {
       return (
         <EmptyState title="상품을 찾을 수 없습니다.">
-          <Link to="/admin" className="btn">목록으로</Link>
+          <Link to="/admin" className="btn">
+            목록으로
+          </Link>
         </EmptyState>
       );
     }
@@ -67,8 +73,8 @@ function EditProduct({ id }) {
           toast.success(`'${updated.title}' 상품을 수정했습니다.`);
           navigate(returnTo, { state: { saved: true } });
         },
-        onError: (err) => toast.error(err.message)
-      }
+        onError: (err) => toast.error(err.message),
+      },
     );
   }
 
@@ -81,7 +87,7 @@ function EditProduct({ id }) {
       onSubmit={handleSubmit}
       onCancel={() => navigate(returnTo)}
     />
-  )
+  );
 }
 
 export default function AdminProductFormPage() {
@@ -93,7 +99,7 @@ export default function AdminProductFormPage() {
     <section className="admin-page">
       <title>{`${title} | SHOP ADMIN`}</title>
       <h1 className="page-title">{title}</h1>
-      {isEdit ? <EditProduct id={id} /> : <CreateProduct /> }
+      {isEdit ? <EditProduct id={id} /> : <CreateProduct />}
     </section>
-  )
+  );
 }

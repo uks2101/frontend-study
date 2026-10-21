@@ -6,7 +6,13 @@ import FormField from './FormField';
 import ImageUpload from './ImageUpload';
 import ConfirmDialog from '../common/ConfirmDialog';
 
-export default function ProductForm({ initialValues, submitLabel, isSubmitting, onSubmit, onCancel }) {
+export default function ProductForm({
+  initialValues,
+  submitLabel,
+  isSubmitting,
+  onSubmit,
+  onCancel,
+}) {
   const [values, setValues] = useState(initialValues);
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -17,7 +23,8 @@ export default function ProductForm({ initialValues, submitLabel, isSubmitting, 
   const isDirty = JSON.stringify(values) !== JSON.stringify(initialValues);
 
   const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) => isDirty && currentLocation.pathname !== nextLocation.pathname && !nextLocation.state?.saved,
+    ({ currentLocation, nextLocation }) =>
+      isDirty && currentLocation.pathname !== nextLocation.pathname && !nextLocation.state?.saved,
   );
 
   useEffect(() => {
@@ -70,24 +77,39 @@ export default function ProductForm({ initialValues, submitLabel, isSubmitting, 
     <form ref={formRef} className="product-form" noValidate onSubmit={handleSubmit}>
       <div className="product-form__grid">
         <FormField id="product-title" label="상품명" required error={errorOf('title')}>
-          <input type='text' className="input" maxLength={100} {...fieldProps('title')} />
+          <input type="text" className="input" maxLength={100} {...fieldProps('title')} />
         </FormField>
 
         <FormField id="product-brand" label="브랜드" required error={errorOf('brand')}>
-          <input type='text' className="input" {...fieldProps('brand')} />
+          <input type="text" className="input" {...fieldProps('brand')} />
         </FormField>
 
         <FormField id="product-category" label="카테고리" required error={errorOf('category')}>
-          <select className="input" disabled={categoryStatus !== 'success'} {...fieldProps('category')}>
-            <option value="">{categoryStatus === 'pending' ? '불러오는 중...' : '카테고리 선택'}</option>
+          <select
+            className="input"
+            disabled={categoryStatus !== 'success'}
+            {...fieldProps('category')}
+          >
+            <option value="">
+              {categoryStatus === 'pending' ? '불러오는 중...' : '카테고리 선택'}
+            </option>
             {categories?.map(({ slug }) => (
-              <option key={slug} value={slug}>{slug.replaceAll('-', ' ')}</option>
+              <option key={slug} value={slug}>
+                {slug.replaceAll('-', ' ')}
+              </option>
             ))}
           </select>
         </FormField>
 
         <FormField id="product-price" label="가격 ($)" required error={errorOf('price')}>
-          <input type="number" className="input" min="0" step="0.01" inputMode="decimal" {...fieldProps('price')} />
+          <input
+            type="number"
+            className="input"
+            min="0"
+            step="0.01"
+            inputMode="decimal"
+            {...fieldProps('price')}
+          />
         </FormField>
 
         <FormField
@@ -96,11 +118,25 @@ export default function ProductForm({ initialValues, submitLabel, isSubmitting, 
           hint="0~90 사이"
           error={errorOf('discountPercentage')}
         >
-          <input type='number' className="input" min="0" max="90" inputMode="decimal" {...fieldProps('discountPercentage')} />
+          <input
+            type="number"
+            className="input"
+            min="0"
+            max="90"
+            inputMode="decimal"
+            {...fieldProps('discountPercentage')}
+          />
         </FormField>
 
         <FormField id="product-stock" label="재고" required error={errorOf('stock')}>
-          <input type="number" className="input" min="0" step="1" inputMode="numeric" {...fieldProps('stock')} />
+          <input
+            type="number"
+            className="input"
+            min="0"
+            step="1"
+            inputMode="numeric"
+            {...fieldProps('stock')}
+          />
         </FormField>
       </div>
 
@@ -127,8 +163,10 @@ export default function ProductForm({ initialValues, submitLabel, isSubmitting, 
       </FormField>
 
       <div className="product-form__actions">
-        <button type='button' className="btn" onClick={onCancel}>취소</button>
-        <button type='submit' className="btn btn--primary" disabled={isSubmitting}>
+        <button type="button" className="btn" onClick={onCancel}>
+          취소
+        </button>
+        <button type="submit" className="btn btn--primary" disabled={isSubmitting}>
           {isSubmitting ? '저장 중...' : submitLabel}
         </button>
       </div>
@@ -142,5 +180,5 @@ export default function ProductForm({ initialValues, submitLabel, isSubmitting, 
         onCancel={() => blocker.reset()}
       />
     </form>
-  )
+  );
 }

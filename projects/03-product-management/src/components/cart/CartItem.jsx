@@ -32,18 +32,31 @@ export default function CartItem({ item, index }) {
 
       <div className="cart-item__info">
         <p className="cart-item__brand">{brand}</p>
-        <Link to={`/products/${id}`} className="cart-item__title">{title}</Link>
+        <Link to={`/products/${id}`} className="cart-item__title">
+          {title}
+        </Link>
         <p className="cart-item__price">
           {formatPrice(salePrice)} <del>{formatPrice(price)}</del>
         </p>
         {quantity >= stock && <p className="cart-item__notice">최대 구매 가능 수량입니다.</p>}
       </div>
 
-      <QuantitySelector value={quantity} max={stock} onChange={(next) => updateQuantity(id, next)} />
+      <QuantitySelector
+        value={quantity}
+        max={stock}
+        onChange={(next) => updateQuantity(id, next)}
+      />
 
       <p className="cart-item__total">{formatPrice(salePrice * quantity)}</p>
 
-      <button type='button' className="cart-item__remove" aria-label={`${title} 삭제`} onClick={handleRemove}>×</button>
+      <button
+        type="button"
+        className="cart-item__remove"
+        aria-label={`${title} 삭제`}
+        onClick={handleRemove}
+      >
+        ×
+      </button>
     </li>
-  )
+  );
 }

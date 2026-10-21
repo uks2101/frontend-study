@@ -2,7 +2,7 @@ export const SORT_OPTIONS = [
   { value: 'latest', label: '최신순' },
   { value: 'price-asc', label: '낮은 가격순' },
   { value: 'price-desc', label: '높은 가격순' },
-  { value: 'rating', label: '평점순' }
+  { value: 'rating', label: '평점순' },
 ];
 
 export const DEFAULT_SORT = 'latest';

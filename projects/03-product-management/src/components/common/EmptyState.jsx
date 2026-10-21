@@ -5,5 +5,5 @@ export default function EmptyState({ title, description, children }) {
       {description && <p className="state-box__desc">{description}</p>}
       {children}
     </div>
-  )
+  );
 }

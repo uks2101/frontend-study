@@ -21,9 +21,7 @@ export default function RootLayout() {
             <NavLink
               to="/"
               end
-              className={({ isActive }) =>
-                isActive || isProductDetail ? "active" : ""
-              }
+              className={({ isActive }) => (isActive || isProductDetail ? 'active' : '')}
             >
               상품
             </NavLink>

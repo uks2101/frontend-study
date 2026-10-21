@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { ADMIN_PAGE_SIZE, useAdminProductParams, useAdminProducts, useDeleteProducts, useUpdateStock } from '../../hooks/useAdminProducts';
+import {
+  ADMIN_PAGE_SIZE,
+  useAdminProductParams,
+  useAdminProducts,
+  useDeleteProducts,
+  useUpdateStock,
+} from '../../hooks/useAdminProducts';
 import { toast } from '../../store/toast/toastStore';
 import SearchBar from '../../components/filter/SearchBar';
 import ProductTable from '../../components/admin/ProductTable';
@@ -23,7 +29,9 @@ export default function AdminProductsPage() {
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   function toggleOne(id) {
-    const ids = selectedIds.includes(id) ? selectedIds.filter((v) => v !== id) : [...selectedIds, id];
+    const ids = selectedIds.includes(id)
+      ? selectedIds.filter((v) => v !== id)
+      : [...selectedIds, id];
     setSelection({ key: listKey, ids });
   }
 
@@ -47,20 +55,27 @@ export default function AdminProductsPage() {
       },
       onError: (err) => {
         toast.error(`삭제하지 못했습니다. ${err.message}`);
-      }
+      },
     });
   }
 
   function handleStockSave(product, stock) {
     stockMutation.mutate(
       { id: product.id, stock, previousStock: product.stock },
-      { onError: (err) => toast.error(`'${product.title}' 재고를 저장하지 못했습니다. ${err.message}`) },
+      {
+        onError: (err) =>
+          toast.error(`'${product.title}' 재고를 저장하지 못했습니다. ${err.message}`),
+      },
     );
   }
 
   function renderContent() {
     if (status === 'pending') {
-      return <p className="admin-loading" role="status">상품 목록을 불러오는 중...</p>;
+      return (
+        <p className="admin-loading" role="status">
+          상품 목록을 불러오는 중...
+        </p>
+      );
     }
 
     if (status === 'error') {
@@ -73,7 +88,9 @@ export default function AdminProductsPage() {
       ) : (
         <EmptyState title="상품이 없습니다.">
           {params.page > 1 && (
-            <button type='button' className="btn" onClick={() => setPage(1)}>첫 페이지로</button>
+            <button type="button" className="btn" onClick={() => setPage(1)}>
+              첫 페이지로
+            </button>
           )}
         </EmptyState>
       );
@@ -81,7 +98,7 @@ export default function AdminProductsPage() {
 
     return (
       <div className={isPlaceholderData ? 'is-stale' : undefined} aria-busy={isPlaceholderData}>
-        <ProductTable 
+        <ProductTable
           products={data.products}
           sort={params.sort}
           onSort={setSort}
@@ -104,14 +121,16 @@ export default function AdminProductsPage() {
 
       <div className="admin-page__header">
         <h1 className="page-title">상품 관리</h1>
-        <Link to="/admin/products/new" state={{ returnTo }} className="btn btn--primary">+ 상품 등록</Link>
+        <Link to="/admin/products/new" state={{ returnTo }} className="btn btn--primary">
+          + 상품 등록
+        </Link>
       </div>
 
       <div className="admin-toolbar">
         <SearchBar value={params.q} onSearch={setSearch} />
         <p className="admin-toolbar__count">{status === 'success' && `총 ${data.total}개`}</p>
         <button
-          type='button'
+          type="button"
           className="btn btn--danger-outline"
           disabled={selectedIds.length === 0}
           onClick={() => setDeleteTarget(selectedIds)}
@@ -122,7 +141,7 @@ export default function AdminProductsPage() {
 
       {renderContent()}
 
-    <ConfirmDialog
+      <ConfirmDialog
         open={deleteTarget !== null}
         title="상품을 삭제할까요?"
         description={`선택한 ${deleteTarget?.length ?? 0}개 상품이 삭제됩니다. 삭제한 상품은 되돌릴 수 없습니다.`}
@@ -131,5 +150,5 @@ export default function AdminProductsPage() {
         onCancel={() => setDeleteTarget(null)}
       />
     </section>
-  )
+  );
 }

@@ -5,8 +5,10 @@ import { getSalePrice } from '../utils/format';
 
 const SORTERS = {
   latest: (a, b) => b.createdAt.localeCompare(a.createdAt),
-  'price-asc': (a, b) => getSalePrice(a.price, a.discountPercentage) - getSalePrice(b.price, b.discountPercentage),
-  'price-desc': (a, b) => getSalePrice(b.price, b.discountPercentage) - getSalePrice(a.price, a.discountPercentage),
+  'price-asc': (a, b) =>
+    getSalePrice(a.price, a.discountPercentage) - getSalePrice(b.price, b.discountPercentage),
+  'price-desc': (a, b) =>
+    getSalePrice(b.price, b.discountPercentage) - getSalePrice(a.price, a.discountPercentage),
   rating: (a, b) => b.rating - a.rating,
   'created-desc': (a, b) => b.createdAt.localeCompare(a.createdAt),
   'created-asc': (a, b) => a.createdAt.localeCompare(b.createdAt),
@@ -28,7 +30,10 @@ function validateProduct(body) {
 
 function mutationError() {
   return getScenario() === 'mutation-error'
-    ? HttpResponse.json({ message: '저장에 실패했습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 })
+    ? HttpResponse.json(
+        { message: '저장에 실패했습니다. 잠시 후 다시 시도해주세요.' },
+        { status: 500 },
+      )
     : null;
 }
 
@@ -54,15 +59,15 @@ export const handlers = [
     const limit = Math.max(1, Number(params.get('limit')) || 20);
 
     const filtered = db.products
-    .filter((p) => !q || p.title.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q))
-    .filter((p) => categories.length === 0 || categories.includes(p.category))
-    .filter((p) => {
-      const salePrice = getSalePrice(p.price, p.discountPercentage);
-      if (minPrice !== null && salePrice < minPrice) return false;
-      if (maxPrice !== null && salePrice > maxPrice) return false;
-      return true;
-    })
-    .toSorted(SORTERS[sort] ?? SORTERS.latest);
+      .filter((p) => !q || p.title.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q))
+      .filter((p) => categories.length === 0 || categories.includes(p.category))
+      .filter((p) => {
+        const salePrice = getSalePrice(p.price, p.discountPercentage);
+        if (minPrice !== null && salePrice < minPrice) return false;
+        if (maxPrice !== null && salePrice > maxPrice) return false;
+        return true;
+      })
+      .toSorted(SORTERS[sort] ?? SORTERS.latest);
 
     const start = (page - 1) * limit;
 
@@ -92,7 +97,9 @@ export const handlers = [
       return HttpResponse.json({ message: '상품을 찾을 수 없습니다.' }, { status: 404 });
     }
 
-    const related = db.products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+    const related = db.products
+      .filter((p) => p.category === product.category && p.id !== product.id)
+      .slice(0, 4);
 
     return HttpResponse.json(related);
   }),
@@ -111,7 +118,7 @@ export const handlers = [
       id: Math.max(0, ...db.products.map((p) => p.id)) + 1,
       images: body.images ?? [body.thumbnail],
       rating: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
     db.products = [product, ...db.products];
     return HttpResponse.json(product, { status: 201 });
@@ -169,9 +176,9 @@ export const handlers = [
     });
 
     const categories = Object.entries(counts)
-    .map(([slug, count]) => ({ slug, count }))
-    .toSorted((a, b) => a.slug.localeCompare(b.slug));
+      .map(([slug, count]) => ({ slug, count }))
+      .toSorted((a, b) => a.slug.localeCompare(b.slug));
 
     return HttpResponse.json(categories);
   }),
-]
+];

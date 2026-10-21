@@ -15,8 +15,9 @@ import EmptyState from '../components/common/EmptyState';
 import Drawer from '../components/common/Drawer';
 
 export default function ProductListPage() {
-  const { filters, setSearch, toggleCategory, setPriceRange, setSort, resetFilters } = useProductFilters();
-  const { 
+  const { filters, setSearch, toggleCategory, setPriceRange, setSort, resetFilters } =
+    useProductFilters();
+  const {
     status,
     data,
     error,
@@ -25,14 +26,15 @@ export default function ProductListPage() {
     isFetchingNextPage,
     isFetchNextPageError,
     fetchNextPage,
-    refetch
+    refetch,
   } = useProducts(filters);
   const [view, setView] = useLocalStorageState('product-view', 'grid');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const products = data?.pages.flatMap((page) => page.products) ?? [];
   const total = data?.pages[0].total ?? 0;
-  const activeFilterCount = filters.categories.length + (filters.minPrice !== null || filters.maxPrice !== null ? 1 : 0);
+  const activeFilterCount =
+    filters.categories.length + (filters.minPrice !== null || filters.maxPrice !== null ? 1 : 0);
 
   function renderContent() {
     if (status === 'pending') {
@@ -46,7 +48,9 @@ export default function ProductListPage() {
     if (products.length === 0) {
       return hasActiveFilters(filters) ? (
         <EmptyState title="조건에 맞는 상품이 없습니다." description="검색어나 필터를 바꿔보세요.">
-          <button type='button' className="btn" onClick={resetFilters}>필터 초기화</button>
+          <button type="button" className="btn" onClick={resetFilters}>
+            필터 초기화
+          </button>
         </EmptyState>
       ) : (
         <EmptyState title="등록된 상품이 없습니다." description="잠시 후 다시 확인해주세요." />
@@ -71,7 +75,7 @@ export default function ProductListPage() {
   return (
     <section className="product-page">
       <h1 className="page-title">상품 목록</h1>
-      
+
       <div className="product-page__layout">
         <FilterPanel
           filters={filters}
@@ -84,7 +88,7 @@ export default function ProductListPage() {
           <div className="product-toolbar">
             <SearchBar value={filters.q} onSearch={setSearch} />
             <button
-              type='button'
+              type="button"
               className="btn filter-toggle"
               onClick={() => setIsFilterOpen(true)}
             >
@@ -113,8 +117,14 @@ export default function ProductListPage() {
         onClose={() => setIsFilterOpen(false)}
         footer={
           <>
-            <button type='button' className="btn" onClick={resetFilters}>초기화</button>
-            <button type='button' className="btn btn--primary" onClick={() => setIsFilterOpen(false)}>
+            <button type="button" className="btn" onClick={resetFilters}>
+              초기화
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() => setIsFilterOpen(false)}
+            >
               {status === 'success' ? `${total}개 상품 보기` : '결과 보기'}
             </button>
           </>
@@ -129,5 +139,5 @@ export default function ProductListPage() {
         />
       </Drawer>
     </section>
-  )
+  );
 }

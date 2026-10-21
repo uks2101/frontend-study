@@ -18,7 +18,7 @@ export default function QuantitySelector({ value, max, onChange, disabled = fals
   return (
     <div className="quantity">
       <button
-        type='button'
+        type="button"
         className="quantity__button"
         aria-label="수량 줄이기"
         disabled={disabled || value <= 1}
@@ -27,7 +27,7 @@ export default function QuantitySelector({ value, max, onChange, disabled = fals
         -
       </button>
       <input
-        type='number'
+        type="number"
         className="quantity__input"
         aria-label="수량"
         min="1"
@@ -39,7 +39,7 @@ export default function QuantitySelector({ value, max, onChange, disabled = fals
         onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
       />
       <button
-        type='button'
+        type="button"
         className="quantity__button"
         aria-label="수량 늘리기"
         disabled={disabled || value >= max}
@@ -48,5 +48,5 @@ export default function QuantitySelector({ value, max, onChange, disabled = fals
         +
       </button>
     </div>
-  )
+  );
 }

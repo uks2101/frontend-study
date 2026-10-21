@@ -7,5 +7,5 @@ export default function ProductList({ products, view = 'grid' }) {
         <ProductCard key={product.id} product={product} />
       ))}
     </ul>
-  )
+  );
 }

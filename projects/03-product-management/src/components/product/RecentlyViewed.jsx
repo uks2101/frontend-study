@@ -10,10 +10,14 @@ export default function RecentlyViewed({ excludeId }) {
   return (
     <section className="related" aria-labelledby="recent-title">
       <div className="related__header">
-        <h2 id="recent-title" className="related__title">최근 본 상품</h2>
-        <button type='button' className="related__clear" onClick={clearRecentlyViewed}>전체 삭제</button>
+        <h2 id="recent-title" className="related__title">
+          최근 본 상품
+        </h2>
+        <button type="button" className="related__clear" onClick={clearRecentlyViewed}>
+          전체 삭제
+        </button>
       </div>
       <ProductList products={visibleItems} />
     </section>
-  )
+  );
 }

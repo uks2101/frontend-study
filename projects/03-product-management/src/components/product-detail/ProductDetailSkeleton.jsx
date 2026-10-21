@@ -11,5 +11,5 @@ export default function ProductDetailSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

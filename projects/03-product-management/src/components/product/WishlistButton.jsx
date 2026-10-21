@@ -5,7 +5,7 @@ export default function WishlistButton({ product, className = '' }) {
 
   return (
     <button
-      type='button'
+      type="button"
       className={`wishlist-button ${className}`}
       aria-pressed={isWishlisted}
       aria-label={`${product.title} 찜하기`}
@@ -13,5 +13,5 @@ export default function WishlistButton({ product, className = '' }) {
     >
       <span aria-hidden="true">{isWishlisted ? '♥' : '♡'}</span>
     </button>
-  )
+  );
 }

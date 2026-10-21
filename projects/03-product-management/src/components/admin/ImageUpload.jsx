@@ -44,13 +44,21 @@ export default function ImageUpload({ id, value, onChange, invalid = false }) {
           aria-describedby={`${id}-error ${id}-file-error`}
           onChange={handleFileChange}
         />
-        <label htmlFor={id} className="btn btn--sm">{value ? '이미지 변경' : '이미지 선택'}</label>
+        <label htmlFor={id} className="btn btn--sm">
+          {value ? '이미지 변경' : '이미지 선택'}
+        </label>
         {value && (
-          <button type='button' className="btn btn--sm" onClick={() => onChange('')}>삭제</button>
+          <button type="button" className="btn btn--sm" onClick={() => onChange('')}>
+            삭제
+          </button>
         )}
         <p className="form-field__hint">JPG, PNG, WEBP · 2MB 이하</p>
-        {fileError && <p id={`${id}-file-error`} className="form-field__error" role="alert">{fileError}</p>}
+        {fileError && (
+          <p id={`${id}-file-error`} className="form-field__error" role="alert">
+            {fileError}
+          </p>
+        )}
       </div>
     </div>
-  )
+  );
 }

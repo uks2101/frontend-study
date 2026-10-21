@@ -26,14 +26,25 @@ function ToastItem({ toast, onDismiss }) {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <span className="toast__icon" aria-hidden="true">{ICONS[type]}</span>
+      <span className="toast__icon" aria-hidden="true">
+        {ICONS[type]}
+      </span>
       <p className="toast__message">{message}</p>
       {action && (
-        <button type='button' className="toast__action" onClick={handleAction}>{action.label}</button>
+        <button type="button" className="toast__action" onClick={handleAction}>
+          {action.label}
+        </button>
       )}
-      <button type='button' className="toast__close" aria-label="알림 닫기" onClick={() => onDismiss(id)}>×</button>
+      <button
+        type="button"
+        className="toast__close"
+        aria-label="알림 닫기"
+        onClick={() => onDismiss(id)}
+      >
+        ×
+      </button>
     </li>
-  )
+  );
 }
 
 export default function ToastContainer({ toasts, onDismiss }) {
@@ -45,5 +56,5 @@ export default function ToastContainer({ toasts, onDismiss }) {
         ))}
       </ol>
     </section>
-  )
+  );
 }

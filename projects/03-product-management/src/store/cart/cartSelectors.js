@@ -11,7 +11,8 @@ export function getCartSummary(items) {
     (sum, item) => sum + getSalePrice(item.price, item.discountPercentage) * item.quantity,
     0,
   );
-  const shipping = checkedItems.length === 0 || salePrice >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const shipping =
+    checkedItems.length === 0 || salePrice >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 
   return {
     checkedCount: checkedItems.length,
@@ -19,6 +20,6 @@ export function getCartSummary(items) {
     discount: originalPrice - salePrice,
     shipping,
     total: salePrice + shipping,
-    remainingForFreeShipping: Math.max(0, FREE_SHIPPING_THRESHOLD - salePrice)
+    remainingForFreeShipping: Math.max(0, FREE_SHIPPING_THRESHOLD - salePrice),
   };
 }

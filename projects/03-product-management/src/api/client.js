@@ -11,9 +11,14 @@ export class ApiError extends Error {
 }
 
 export async function request(url, { body, headers, ...options } = {}) {
-  const init = body === undefined
-    ? { ...options, headers }
-    : { ...options, body: JSON.stringify(body), headers: { 'Content-Type': 'application/json', ...headers } };
+  const init =
+    body === undefined
+      ? { ...options, headers }
+      : {
+          ...options,
+          body: JSON.stringify(body),
+          headers: { 'Content-Type': 'application/json', ...headers },
+        };
 
   let res;
   try {

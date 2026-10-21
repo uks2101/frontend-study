@@ -5,9 +5,7 @@ import { syncTabs } from '../syncTabs';
 
 const MAX_RECENT = 10;
 
-const useRecentStore = create(
-  persist(() => ({ items: [] }), { name: 'recent-storage' }),
-);
+const useRecentStore = create(persist(() => ({ items: [] }), { name: 'recent-storage' }));
 
 syncTabs(useRecentStore);
 

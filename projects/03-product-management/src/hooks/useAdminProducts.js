@@ -1,15 +1,25 @@
 import { useSearchParams } from 'react-router';
 import { useQuery, useMutation, keepPreviousData } from '@tanstack/react-query';
-import { getProducts, deleteProduct, deleteProducts, createProduct, updateProduct } from '../api/products';
+import {
+  getProducts,
+  deleteProduct,
+  deleteProducts,
+  createProduct,
+  updateProduct,
+} from '../api/products';
 
 export const ADMIN_PAGE_SIZE = 10;
 export const ADMIN_DEFAULT_SORT = 'created-desc';
 
 const ADMIN_SORTS = [
-  'created-desc', 'created-asc',
-  'title-asc', 'title-desc',
-  'price-asc', 'price-desc',
-  'stock-asc', 'stock-desc',
+  'created-desc',
+  'created-asc',
+  'title-asc',
+  'title-desc',
+  'price-asc',
+  'price-desc',
+  'stock-asc',
+  'stock-desc',
 ];
 
 export function useAdminProductParams() {
@@ -43,8 +53,11 @@ export function useAdminProducts({ page, q, sort }) {
   return useQuery({
     queryKey: ['products', 'admin', { page, q, sort }],
     queryFn: ({ signal }) =>
-      getProducts({ q, categories: [], minPrice: null, maxPrice: null, sort }, { page, limit: ADMIN_PAGE_SIZE, signal }),
-    placeholderData: keepPreviousData
+      getProducts(
+        { q, categories: [], minPrice: null, maxPrice: null, sort },
+        { page, limit: ADMIN_PAGE_SIZE, signal },
+      ),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -72,21 +85,22 @@ export function useDeleteProducts() {
     onError: (_error, _ids, onMutateResult, { client }) => {
       onMutateResult?.snapshot.forEach(([queryKey, data]) => client.setQueryData(queryKey, data));
     },
-    onSettled: (_data, _error, _ids, _onMutateResult, { client }) => invalidateProductQueries(client)
+    onSettled: (_data, _error, _ids, _onMutateResult, { client }) =>
+      invalidateProductQueries(client),
   });
 }
 
 export function useCreateProduct() {
   return useMutation({
     mutationFn: (data) => createProduct(data),
-    onSuccess: (_data, _variables, _onMutateResult, { client }) => invalidateProductQueries(client)
+    onSuccess: (_data, _variables, _onMutateResult, { client }) => invalidateProductQueries(client),
   });
 }
 
 export function useUpdateProduct() {
   return useMutation({
     mutationFn: ({ id, data }) => updateProduct(id, data),
-    onSuccess: (_data, _variables, _onMutateResult, { client }) => invalidateProductQueries(client)
+    onSuccess: (_data, _variables, _onMutateResult, { client }) => invalidateProductQueries(client),
   });
 }
 
@@ -96,7 +110,9 @@ function setStockInCache(client, id, nextStock, expectedStock) {
     return {
       ...data,
       products: data.products.map((p) =>
-        p.id === id && (expectedStock === undefined || p.stock === expectedStock) ? { ...p, stock: nextStock } : p,
+        p.id === id && (expectedStock === undefined || p.stock === expectedStock)
+          ? { ...p, stock: nextStock }
+          : p,
       ),
     };
   });
@@ -113,6 +129,7 @@ export function useUpdateStock() {
     onError: (_error, { id, stock }, onMutateResult, { client }) => {
       if (onMutateResult) setStockInCache(client, id, onMutateResult.previousStock, stock);
     },
-    onSettled: (_data, _error, _variables, _onMutateResult, { client }) => invalidateProductQueries(client)
+    onSettled: (_data, _error, _variables, _onMutateResult, { client }) =>
+      invalidateProductQueries(client),
   });
 }

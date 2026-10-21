@@ -4,7 +4,7 @@ const PRICE_PRESETS = [
   { label: '$25 이하', min: null, max: 25 },
   { label: '$25 ~ $100', min: 25, max: 100 },
   { label: '$100 ~ $500', min: 100, max: 500 },
-  { label: '$500 이상', min: 500, max: null }
+  { label: '$500 이상', min: 500, max: null },
 ];
 
 export default function PriceFilter({ minPrice, maxPrice, onApply }) {
@@ -35,7 +35,7 @@ export default function PriceFilter({ minPrice, maxPrice, onApply }) {
           return (
             <button
               key={preset.label}
-              type='button'
+              type="button"
               aria-pressed={isActive}
               onClick={() => (isActive ? onApply(null, null) : onApply(preset.min, preset.max))}
             >
@@ -46,29 +46,35 @@ export default function PriceFilter({ minPrice, maxPrice, onApply }) {
       </div>
 
       <form className="price-filter" onSubmit={handleSubmit}>
-        <label className="sr-only" htmlFor={minId}>최소 가격</label>
+        <label className="sr-only" htmlFor={minId}>
+          최소 가격
+        </label>
         <input
           id={minId}
-          type='number'
+          type="number"
           min="0"
           inputMode="numeric"
-          placeholder='최소'
+          placeholder="최소"
           value={min}
           onChange={(e) => setMin(e.target.value)}
         />
         <span aria-hidden="true">~</span>
-        <label className="sr-only" htmlFor={maxId}>최대 가격</label>
+        <label className="sr-only" htmlFor={maxId}>
+          최대 가격
+        </label>
         <input
           id={maxId}
-          type='number'
+          type="number"
           min="0"
           inputMode="numeric"
-          placeholder='최대'
+          placeholder="최대"
           value={max}
           onChange={(e) => setMax(e.target.value)}
         />
-        <button type='submit' className="btn btn--sm">적용</button>
+        <button type="submit" className="btn btn--sm">
+          적용
+        </button>
       </form>
     </fieldset>
-  )
+  );
 }

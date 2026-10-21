@@ -5,12 +5,10 @@ import { syncTabs } from '../syncTabs';
 export const THEME_OPTIONS = [
   { value: 'system', label: '시스템 설정' },
   { value: 'light', label: '라이트' },
-  { value: 'dark', label: '다크' }
+  { value: 'dark', label: '다크' },
 ];
 
-const useThemeStore = create(
-  persist(() => ({ theme: 'system' }), { name: 'theme-storage' }),
-);
+const useThemeStore = create(persist(() => ({ theme: 'system' }), { name: 'theme-storage' }));
 
 syncTabs(useThemeStore);
 

@@ -3,9 +3,7 @@ import { persist } from 'zustand/middleware';
 import { toProductSnapshot } from '../../utils/productSnapshot';
 import { syncTabs } from '../syncTabs';
 
-const useWishlistStore = create(
-  persist(() => ({ items: [] }), { name: 'wishlist-storage' }),
-);
+const useWishlistStore = create(persist(() => ({ items: [] }), { name: 'wishlist-storage' }));
 
 syncTabs(useWishlistStore);
 

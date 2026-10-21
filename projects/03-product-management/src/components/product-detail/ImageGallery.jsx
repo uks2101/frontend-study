@@ -6,7 +6,12 @@ export default function ImageGallery({ images, title }) {
   return (
     <div className="gallery">
       <div className="gallery__main">
-        <img src={images[selectedIndex]} alt={`${title} 이미지 ${selectedIndex + 1}`} width="600" height="600" />
+        <img
+          src={images[selectedIndex]}
+          alt={`${title} 이미지 ${selectedIndex + 1}`}
+          width="600"
+          height="600"
+        />
       </div>
 
       {images.length > 1 && (
@@ -27,5 +32,5 @@ export default function ImageGallery({ images, title }) {
         </ul>
       )}
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { writeFile, mkdir } from 'node:fs/promises'
+import { writeFile, mkdir } from 'node:fs/promises';
 
 const res = await fetch('https://dummyjson.com/products?limit=0');
 if (!res.ok) throw new Error(`데이터 요청 실패: ${res.status}`);

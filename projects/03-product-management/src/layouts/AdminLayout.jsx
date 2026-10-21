@@ -17,9 +17,7 @@ export default function AdminLayout() {
             <NavLink
               to="/admin"
               end
-              className={({ isActive }) =>
-                isActive || isEditPage ? "active" : ""
-              }
+              className={({ isActive }) => (isActive || isEditPage ? 'active' : '')}
             >
               상품 관리
             </NavLink>

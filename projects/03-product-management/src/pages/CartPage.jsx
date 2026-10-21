@@ -14,7 +14,9 @@ export default function CartPage() {
     return (
       <EmptyState title="장바구니가 비어 있습니다." description="마음에 드는 상품을 담아보세요.">
         <title>장바구니 | SHOP</title>
-        <Link to="/" className="btn">쇼핑하러 가기</Link>
+        <Link to="/" className="btn">
+          쇼핑하러 가기
+        </Link>
       </EmptyState>
     );
   }
@@ -42,7 +44,7 @@ export default function CartPage() {
           <div className="cart__toolbar">
             <label className="cart__check-all">
               <input
-                type='checkbox'
+                type="checkbox"
                 checked={allChecked}
                 ref={(el) => {
                   if (el) el.indeterminate = someChecked;
@@ -52,7 +54,7 @@ export default function CartPage() {
               전체 선택 ({summary.checkedCount}/{items.length})
             </label>
             <button
-              type='button'
+              type="button"
               className="btn btn--sm"
               disabled={summary.checkedCount === 0}
               onClick={handleRemoveChecked}
@@ -71,5 +73,5 @@ export default function CartPage() {
         <CartSummary summary={summary} onOrder={handleOrder} />
       </div>
     </section>
-  )
+  );
 }

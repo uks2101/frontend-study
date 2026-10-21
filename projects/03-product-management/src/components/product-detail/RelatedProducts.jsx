@@ -9,8 +9,10 @@ export default function RelatedProducts({ productId }) {
 
   return (
     <section className="related" aria-labelledby="related-title">
-      <h2 id='related-title' className="related__title">이런 상품은 어떠세요?</h2>
+      <h2 id="related-title" className="related__title">
+        이런 상품은 어떠세요?
+      </h2>
       {status === 'pending' ? <ProductListSkeleton count={4} /> : <ProductList products={data} />}
     </section>
-  )
+  );
 }

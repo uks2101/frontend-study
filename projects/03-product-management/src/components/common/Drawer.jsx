@@ -28,11 +28,15 @@ export default function Drawer({ open, title, onClose, footer, children }) {
       onClick={handleBackdropClick}
     >
       <div className="drawer__header">
-        <h2 id={titleId} className="drawer__title">{title}</h2>
-        <button type='button' className="drawer__close" aria-label="닫기" onClick={onClose}>×</button>
+        <h2 id={titleId} className="drawer__title">
+          {title}
+        </h2>
+        <button type="button" className="drawer__close" aria-label="닫기" onClick={onClose}>
+          ×
+        </button>
       </div>
       <div className="drawer__body">{open && children}</div>
       {footer && <div className="drawer__footer">{footer}</div>}
     </dialog>
-  )
+  );
 }

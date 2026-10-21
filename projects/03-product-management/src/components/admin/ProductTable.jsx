@@ -11,18 +11,32 @@ function SortableHeader({ field, label, sort, onSort }) {
   }
 
   return (
-    <th scope="col" aria-sort={isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}>
-      <button type='button' className="sort-button" onClick={handleClick}>
+    <th
+      scope="col"
+      aria-sort={isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+    >
+      <button type="button" className="sort-button" onClick={handleClick}>
         {label}
         <span className="sort-button__icon" aria-hidden="true">
           {isActive ? (sortDir === 'asc' ? '▲' : '▼') : '↕'}
         </span>
       </button>
     </th>
-  )
+  );
 }
 
-export default function ProductTable({ products, sort, onSort, selectedIds, onToggle, onToggleAll, onDelete, onStockSave, onStockInvalid, returnTo }) {
+export default function ProductTable({
+  products,
+  sort,
+  onSort,
+  selectedIds,
+  onToggle,
+  onToggleAll,
+  onDelete,
+  onStockSave,
+  onStockInvalid,
+  returnTo,
+}) {
   const selectedCount = products.filter((p) => selectedIds.includes(p.id)).length;
   const allSelected = products.length > 0 && selectedCount === products.length;
   const someSelected = selectedCount > 0 && !allSelected;
@@ -35,7 +49,7 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
           <tr>
             <th scope="col" className="admin-table__check">
               <input
-                type='checkbox'
+                type="checkbox"
                 aria-label="현재 페이지 전체 선택"
                 checked={allSelected}
                 ref={(el) => {
@@ -55,16 +69,28 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
         </thead>
         <tbody>
           {products.map((product) => {
-            const { id, title, brand, category, thumbnail, price, discountPercentage, createdAt } = product;
+            const { id, title, brand, category, thumbnail, price, discountPercentage, createdAt } =
+              product;
             const isSelected = selectedIds.includes(id);
 
             return (
               <tr key={id} className={isSelected ? 'is-selected' : undefined}>
                 <td className="admin-table__check">
-                  <input type="checkbox" aria-label={`${title} 선택`} checked={isSelected} onChange={() => onToggle(id)} />
+                  <input
+                    type="checkbox"
+                    aria-label={`${title} 선택`}
+                    checked={isSelected}
+                    onChange={() => onToggle(id)}
+                  />
                 </td>
                 <td>
-                  <img className="admin-table__thumb" src={thumbnail} alt="" width="48" height="48" />
+                  <img
+                    className="admin-table__thumb"
+                    src={thumbnail}
+                    alt=""
+                    width="48"
+                    height="48"
+                  />
                 </td>
                 <td>
                   <p className="admin-table__title">{title}</p>
@@ -81,8 +107,20 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
                 <td>{new Date(createdAt).toLocaleDateString('ko-KR')}</td>
                 <td>
                   <div className="admin-table__actions">
-                    <Link to={`/admin/products/${id}/edit`} state={{ returnTo }} className="btn btn--sm">수정</Link>
-                    <button type='button' className="btn btn--sm btn--danger-outline" onClick={() => onDelete([id])}>삭제</button>
+                    <Link
+                      to={`/admin/products/${id}/edit`}
+                      state={{ returnTo }}
+                      className="btn btn--sm"
+                    >
+                      수정
+                    </Link>
+                    <button
+                      type="button"
+                      className="btn btn--sm btn--danger-outline"
+                      onClick={() => onDelete([id])}
+                    >
+                      삭제
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -91,5 +129,5 @@ export default function ProductTable({ products, sort, onSort, selectedIds, onTo
         </tbody>
       </table>
     </div>
-  )
+  );
 }

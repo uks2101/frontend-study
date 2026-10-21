@@ -36,7 +36,7 @@ export default function StockCell({ product, onSave, onInvalid }) {
   if (draft === null) {
     return (
       <button
-        type='button'
+        type="button"
         className={stock < LOW_STOCK ? 'stock-badge stock-badge--low' : 'stock-badge'}
         aria-label={`${title} 재고 ${stock}개, 수정하기`}
         autoFocus={restoreFocus}
@@ -49,7 +49,7 @@ export default function StockCell({ product, onSave, onInvalid }) {
 
   return (
     <input
-      type='number'
+      type="number"
       className="stock-input"
       aria-label={`${title} 재고`}
       min="0"
@@ -60,5 +60,5 @@ export default function StockCell({ product, onSave, onInvalid }) {
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
     />
-  )
+  );
 }

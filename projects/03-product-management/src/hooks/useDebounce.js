@@ -10,7 +10,7 @@ export function useDebounce(value, delay) {
 
     return () => {
       clearTimeout(timerId);
-    }
+    };
   }, [value, delay]);
 
   return debouncedValue;

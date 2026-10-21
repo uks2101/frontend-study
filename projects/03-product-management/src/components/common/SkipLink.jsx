@@ -5,6 +5,8 @@ export default function SkipLink() {
   }
 
   return (
-    <a href="#main" className="skip-link" onClick={handleClick}>본문 바로가기</a>
-  )
+    <a href="#main" className="skip-link" onClick={handleClick}>
+      본문 바로가기
+    </a>
+  );
 }

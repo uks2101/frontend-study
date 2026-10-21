@@ -28,5 +28,5 @@ export default function ProductCard({ product }) {
       </Link>
       <WishlistButton product={product} className="product-card__wish" />
     </li>
-  )
+  );
 }

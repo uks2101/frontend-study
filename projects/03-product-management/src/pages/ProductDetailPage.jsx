@@ -19,7 +19,9 @@ export default function ProductDetailPage() {
     if (error.status === 404) {
       return (
         <EmptyState title="상품을 찾을 수 없습니다." description="삭제되었거나 잘못된 주소입니다.">
-          <Link to="/" className="btn">상품 목록으로</Link>
+          <Link to="/" className="btn">
+            상품 목록으로
+          </Link>
         </EmptyState>
       );
     }
@@ -32,5 +34,5 @@ export default function ProductDetailPage() {
       <RelatedProducts productId={id} />
       <RecentlyViewed excludeId={product.id} />
     </>
-  )
+  );
 }

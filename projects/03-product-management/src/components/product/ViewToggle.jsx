@@ -1,6 +1,6 @@
 const VIEW_OPTIONS = [
   { value: 'grid', label: '그리드 보기', icon: '▦' },
-  { value: 'list', label: '리스트 보기', icon: '☰' }
+  { value: 'list', label: '리스트 보기', icon: '☰' },
 ];
 
 export default function ViewToggle({ value, onChange }) {
@@ -20,5 +20,5 @@ export default function ViewToggle({ value, onChange }) {
         </button>
       ))}
     </div>
-  )
+  );
 }

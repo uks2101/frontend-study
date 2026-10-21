@@ -6,7 +6,7 @@ export const EMPTY_PRODUCT_FORM = {
   price: '',
   discountPercentage: '0',
   stock: '',
-  thumbnail: ''
+  thumbnail: '',
 };
 
 export const FIELD_ORDER = Object.keys(EMPTY_PRODUCT_FORM);
@@ -20,7 +20,7 @@ export function toFormValues(product) {
     price: String(product.price),
     discountPercentage: String(product.discountPercentage),
     stock: String(product.stock),
-    thumbnail: product.thumbnail
+    thumbnail: product.thumbnail,
   };
 }
 
@@ -36,7 +36,8 @@ export function validateProductForm(values) {
   if (!values.brand.trim()) errors.brand = '브랜드를 입력해주세요.';
   if (!values.category) errors.category = '카테고리를 선택해주세요.';
 
-  if (values.description.trim().length < 10) errors.description = '상품 설명을 10자 이상 입력해주세요.';
+  if (values.description.trim().length < 10)
+    errors.description = '상품 설명을 10자 이상 입력해주세요.';
 
   if (values.price === '') errors.price = '가격을 입력해주세요.';
   else if (!(price > 0)) errors.price = '가격은 0보다 커야 합니다.';
@@ -46,7 +47,8 @@ export function validateProductForm(values) {
   }
 
   if (values.stock === '') errors.stock = '재고를 입력해주세요.';
-  else if (!Number.isInteger(stock) || stock < 0) errors.stock = '재고는 0 이상의 정수로 입력해주세요.';
+  else if (!Number.isInteger(stock) || stock < 0)
+    errors.stock = '재고는 0 이상의 정수로 입력해주세요.';
 
   if (!values.thumbnail) errors.thumbnail = '대표 이미지를 등록해주세요.';
 
@@ -65,6 +67,6 @@ export function toProductPayload(values, original) {
     discountPercentage: Number(values.discountPercentage),
     stock: Number(values.stock),
     thumbnail: values.thumbnail,
-    images: isSameImage ? original.images : [values.thumbnail]
+    images: isSameImage ? original.images : [values.thumbnail],
   };
 }

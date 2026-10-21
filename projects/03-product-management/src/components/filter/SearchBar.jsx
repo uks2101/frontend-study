@@ -21,8 +21,17 @@ export default function SearchBar({ value, onSearch }) {
 
   return (
     <div className="search-bar">
-      <label htmlFor="product-search" className="sr-only">상품 검색</label>
-      <input type="search" id="product-search" className="search-bar__input" placeholder="상품명, 브랜드 검색" value={input} onChange={(e) => setInput(e.target.value)} />
+      <label htmlFor="product-search" className="sr-only">
+        상품 검색
+      </label>
+      <input
+        type="search"
+        id="product-search"
+        className="search-bar__input"
+        placeholder="상품명, 브랜드 검색"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
     </div>
-  )
+  );
 }

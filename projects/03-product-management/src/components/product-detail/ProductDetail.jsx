@@ -11,8 +11,21 @@ import WishlistButton from '../product/WishlistButton';
 const LOW_STOCK = 10;
 
 export default function ProductDetail({ product }) {
-  const { id, title, brand, category, description, images, price, discountPercentage, rating, stock } = product;
-  const inCartQuantity = useCartStore((state) => state.items.find((item) => item.id === id)?.quantity ?? 0);
+  const {
+    id,
+    title,
+    brand,
+    category,
+    description,
+    images,
+    price,
+    discountPercentage,
+    rating,
+    stock,
+  } = product;
+  const inCartQuantity = useCartStore(
+    (state) => state.items.find((item) => item.id === id)?.quantity ?? 0,
+  );
   const addItem = useCartStore((state) => state.addItem);
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
@@ -38,10 +51,14 @@ export default function ProductDetail({ product }) {
     <article className="detail">
       <title>{`${title} | SHOP`}</title>
 
-      <nav className="breadcrumb" aria-label='현재 위치'>
+      <nav className="breadcrumb" aria-label="현재 위치">
         <ol>
-          <li><Link to="/">상품</Link></li>
-          <li><Link to={`/?category=${category}`}>{category.replaceAll('-', ' ')}</Link></li>
+          <li>
+            <Link to="/">상품</Link>
+          </li>
+          <li>
+            <Link to={`/?category=${category}`}>{category.replaceAll('-', ' ')}</Link>
+          </li>
           <li aria-current="page">{title}</li>
         </ol>
       </nav>
@@ -72,7 +89,12 @@ export default function ProductDetail({ product }) {
           </p>
 
           <div className="detail__purchase">
-            <QuantitySelector value={quantity} max={Math.max(available, 1)} onChange={setQuantity} disabled={!canAdd} />
+            <QuantitySelector
+              value={quantity}
+              max={Math.max(available, 1)}
+              onChange={setQuantity}
+              disabled={!canAdd}
+            />
             <p className="detail__total">
               총 <strong>{formatPrice(salePrice * quantity)}</strong>
             </p>
@@ -86,7 +108,7 @@ export default function ProductDetail({ product }) {
           )}
 
           <button
-            type='button'
+            type="button"
             className="btn btn--primary btn--block"
             disabled={!canAdd}
             onClick={handleAddToCart}
@@ -96,5 +118,5 @@ export default function ProductDetail({ product }) {
         </div>
       </div>
     </article>
-  )
+  );
 }
