@@ -9,6 +9,16 @@ import Toaster from './components/common/Toaster'
 import './index.css'
 
 async function enableMocking() {
+  if (import.meta.env.PROD) {
+    try {
+      const registrations = await navigator.serviceWorker?.getRegistrations();
+      registrations?.forEach((registration) => registration.unregister());
+    } catch {
+      // 무시
+    }
+    return;
+  }
+
   const { worker } = await import('./mocks/browser');
   return worker.start({
     onUnhandledRequest: 'bypass',

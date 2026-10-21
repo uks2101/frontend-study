@@ -1,3 +1,7 @@
+import { mockFetch } from '../mocks/mockFetch';
+
+const fetcher = import.meta.env.PROD ? mockFetch : (...args) => fetch(...args);
+
 export class ApiError extends Error {
   constructor(message, status) {
     super(message);
@@ -13,7 +17,7 @@ export async function request(url, { body, headers, ...options } = {}) {
 
   let res;
   try {
-    res = await fetch(url, init);
+    res = await fetcher(url, init);
   } catch (err) {
     if (err.name === 'AbortError') throw err;
     throw new ApiError('네트워크 연결을 확인해주세요.', 0);
@@ -25,6 +29,10 @@ export async function request(url, { body, headers, ...options } = {}) {
   }
 
   if (res.status === 204) return null;
+
+  if (!res.headers.get('Content-Type')?.includes('application/json')) {
+    throw new ApiError('서버 응답 형식이 올바르지 않습니다.', res.status);
+  }
 
   return res.json();
 }
